@@ -57,6 +57,12 @@ class User
     #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'buyer', orphanRemoval: true)]
     private Collection $messages;
 
+    /**
+     * @var Collection<int, Offer>
+     */
+    #[ORM\OneToMany(targetEntity: Offer::class, mappedBy: 'users', orphanRemoval: true)]
+    private Collection $offers;
+
     public function __construct()
     {
         $this->products = new ArrayCollection();
@@ -64,6 +70,7 @@ class User
         $this->orders_buyer = new ArrayCollection();
         $this->orders_seller = new ArrayCollection();
         $this->messages = new ArrayCollection();
+        $this->offers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -260,6 +267,36 @@ class User
             // set the owning side to null (unless already changed)
             if ($message->getBuyer() === $this) {
                 $message->setBuyer(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Offer>
+     */
+    public function getOffers(): Collection
+    {
+        return $this->offers;
+    }
+
+    public function addOffer(Offer $offer): static
+    {
+        if (!$this->offers->contains($offer)) {
+            $this->offers->add($offer);
+            $offer->setUsers($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOffer(Offer $offer): static
+    {
+        if ($this->offers->removeElement($offer)) {
+            // set the owning side to null (unless already changed)
+            if ($offer->getUsers() === $this) {
+                $offer->setUsers(null);
             }
         }
 

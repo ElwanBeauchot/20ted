@@ -56,10 +56,17 @@ class Product
     #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'products', orphanRemoval: true)]
     private Collection $messages;
 
+    /**
+     * @var Collection<int, Offer>
+     */
+    #[ORM\OneToMany(targetEntity: Offer::class, mappedBy: 'products', orphanRemoval: true)]
+    private Collection $offers;
+
     public function __construct()
     {
         $this->favorite = new ArrayCollection();
         $this->messages = new ArrayCollection();
+        $this->offers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -228,6 +235,36 @@ class Product
             // set the owning side to null (unless already changed)
             if ($message->getProducts() === $this) {
                 $message->setProducts(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Offer>
+     */
+    public function getOffers(): Collection
+    {
+        return $this->offers;
+    }
+
+    public function addOffer(Offer $offer): static
+    {
+        if (!$this->offers->contains($offer)) {
+            $this->offers->add($offer);
+            $offer->setProducts($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOffer(Offer $offer): static
+    {
+        if ($this->offers->removeElement($offer)) {
+            // set the owning side to null (unless already changed)
+            if ($offer->getProducts() === $this) {
+                $offer->setProducts(null);
             }
         }
 
