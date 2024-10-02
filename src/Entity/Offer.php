@@ -21,7 +21,7 @@ class Offer
 
     #[ORM\ManyToOne(inversedBy: 'offers')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $users = null;
+    private ?SecurityUser $users = null;
 
     #[ORM\ManyToOne(inversedBy: 'offers')]
     #[ORM\JoinColumn(nullable: false)]
@@ -56,12 +56,12 @@ class Offer
         return $this;
     }
 
-    public function getUsers(): ?User
+    public function getUsers(): ?SecurityUser
     {
         return $this->users;
     }
 
-    public function setUsers(?User $users): static
+    public function setUsers(?SecurityUser $users): static
     {
         $this->users = $users;
 

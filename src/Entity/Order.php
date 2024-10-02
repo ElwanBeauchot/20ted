@@ -23,11 +23,11 @@ class Order
 
     #[ORM\ManyToOne(inversedBy: 'orders_buyer')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $buyer = null;
+    private ?SecurityUser $buyer = null;
 
     #[ORM\ManyToOne(inversedBy: 'orders_seller')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $seller = null;
+    private ?SecurityUser $seller = null;
 
     public function getId(): ?int
     {
@@ -58,24 +58,24 @@ class Order
         return $this;
     }
 
-    public function getBuyer(): ?User
+    public function getBuyer(): ?SecurityUser
     {
         return $this->buyer;
     }
 
-    public function setBuyer(?User $buyer): static
+    public function setBuyer(?SecurityUser $buyer): static
     {
         $this->buyer = $buyer;
 
         return $this;
     }
 
-    public function getSeller(): ?User
+    public function getSeller(): ?SecurityUser
     {
         return $this->seller;
     }
 
-    public function setSeller(?User $seller): static
+    public function setSeller(?SecurityUser $seller): static
     {
         $this->seller = $seller;
 

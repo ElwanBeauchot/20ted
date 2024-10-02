@@ -26,7 +26,7 @@ class Message
 
     #[ORM\ManyToOne(inversedBy: 'messages')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $buyer = null;
+    private ?SecurityUser $buyer = null;
 
     public function getId(): ?int
     {
@@ -69,12 +69,12 @@ class Message
         return $this;
     }
 
-    public function getBuyer(): ?User
+    public function getBuyer(): ?SecurityUser
     {
         return $this->buyer;
     }
 
-    public function setBuyer(?User $buyer): static
+    public function setBuyer(?SecurityUser $buyer): static
     {
         $this->buyer = $buyer;
 

@@ -39,12 +39,12 @@ class Product
 
     #[ORM\ManyToOne(inversedBy: 'products')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $users = null;
+    private ?SecurityUser $users = null;
 
     /**
-     * @var Collection<int, User>
+     * @var Collection<int, SecurityUser>
      */
-    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'favorite')]
+    #[ORM\ManyToMany(targetEntity: SecurityUser::class, inversedBy: 'favorite')]
     private Collection $favorite;
 
     #[ORM\OneToOne(mappedBy: 'products', cascade: ['persist', 'remove'])]
@@ -158,12 +158,12 @@ class Product
         return $this;
     }
 
-    public function getUsers(): ?User
+    public function getUsers(): ?SecurityUser
     {
         return $this->users;
     }
 
-    public function setUsers(?User $users): static
+    public function setUsers(?SecurityUser $users): static
     {
         $this->users = $users;
 
@@ -171,14 +171,14 @@ class Product
     }
 
     /**
-     * @return Collection<int, User>
+     * @return Collection<int, SecurityUser>
      */
     public function getFavorite(): Collection
     {
         return $this->favorite;
     }
 
-    public function addFavorite(User $favorite): static
+    public function addFavorite(SecurityUser $favorite): static
     {
         if (!$this->favorite->contains($favorite)) {
             $this->favorite->add($favorite);
@@ -187,7 +187,7 @@ class Product
         return $this;
     }
 
-    public function removeFavorite(User $favorite): static
+    public function removeFavorite(SecurityUser $favorite): static
     {
         $this->favorite->removeElement($favorite);
 
