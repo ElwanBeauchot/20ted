@@ -18,7 +18,7 @@ class PopupProductController extends AbstractController
     {
         
     }
-    #[Route('/productsseller/popupProduct', name: 'app_popup_product')]
+    #[Route('/user/me/add-product', name: 'app_popup_product')]
     public function index(Request $request): Response
     {
         
@@ -38,7 +38,7 @@ class PopupProductController extends AbstractController
          'form' => $form->createView(),
       ]);
     }
-    #[Route('/productsseller/popupProduct/{id}', name: 'app_popup_product_edit')]
+    #[Route('/user/me/edit-product/{id}', name: 'app_popup_product_edit')]
     public function edit(Request $request, $id): Response
     {
 
@@ -57,7 +57,7 @@ class PopupProductController extends AbstractController
             'form' => $form->createView(),
          ]);
     }
-    #[Route('/productsseller/popupProduct/delete/{id}', name: 'app_popup_product_delete')]
+    #[Route('/user/me/delete-product/{id}', name: 'app_popup_product_delete')]
     public function delete($id): Response
     {
 
