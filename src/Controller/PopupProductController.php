@@ -31,7 +31,7 @@ class PopupProductController extends AbstractController
             $new_product->setFav(0);
             $this->entityManagerInterface->persist($new_product);
             $this->entityManagerInterface->flush();
-            return $this->redirectToRoute('app_productsseller');
+            return $this->redirectToRoute('app_me');
         }
 
       return $this->render('popup_product/index.html.twig', [
@@ -50,7 +50,7 @@ class PopupProductController extends AbstractController
         if ($form->isSubmitted () && $form->isValid()) {
             $this->entityManagerInterface->persist($update_product);
             $this->entityManagerInterface->flush();
-            return $this->redirectToRoute('app_productsseller');
+            return $this->redirectToRoute('app_me');
         }
 
         return $this->render('popup_product/index.html.twig', [
@@ -65,10 +65,6 @@ class PopupProductController extends AbstractController
         $this->entityManagerInterface->remove($update_product);
         $this->entityManagerInterface->flush();
 
-        return $this->redirectToRoute('app_productsseller');
-
-        return $this->render('popup_product/index.html.twig', [
-
-         ]);
+        return $this->redirectToRoute('app_me');
     }
 }
