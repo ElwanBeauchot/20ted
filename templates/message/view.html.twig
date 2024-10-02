@@ -1,0 +1,15 @@
+{# templates/message/view.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du Message{% endblock %}
+
+{% block body %}
+    <h1>Détails du Message</h1>
+
+    <p>Date: {{ message.date|date('Y-m-d H:i') }}</p>
+    <p>Message {{ message.text }}</p>
+    <a href="{{ path('app_messages') }}">Retour à la liste des messages</a>
+{% endblock %}
+
+
