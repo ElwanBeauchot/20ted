@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
 use App\Entity\Product;
 use App\Form\AddProductType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -20,20 +21,27 @@ class PopupProductController extends AbstractController
     #[Route('/productsseller/popupProduct', name: 'app_popup_product')]
     public function index(Request $request): Response
     {
-    
+        // $new_categorie= new Category();
+        // $new_categorie->setName('VêtementS');
+        // $this->entityManagerInterface->persist($new_categorie);
+        // $this->entityManagerInterface->flush();
+
+        
         $new_product = new Product();
         $form = $this->createForm(AddProductType::class, $new_product);
         $form->handleRequest ($request );
 
         if ($form->isSubmitted () && $form->isValid()) {
-            $em = $this->entityManagerInterface;
-            $em->persist($new_product);
-            $em->flush();
+            dd($this->getUser());
+            $new_product->setUsers($this->getUser());
+            $new_product->setFav(0);
+            $this->entityManagerInterface->persist($new_product);
+            $this->entityManagerInterface->flush();
             return $this->redirectToRoute('app_productsseller');
         }
 
       return $this->render('popup_product/index.html.twig', [
-         'form' => $form->createView()
+         'form' => $form->createView(),
       ]);
     }
 }

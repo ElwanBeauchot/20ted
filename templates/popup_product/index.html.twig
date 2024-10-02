@@ -3,16 +3,59 @@
 {% block title %}Liste des Produits{% endblock %}
 
 {% block body %}
+<style>
+    .modal-dialog {
+        max-width: 500px;
+    }
+    .modal-content {
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .modal-header {
+        background-color: #f8f9fa;
+        border-bottom: 1px solid #dee2e6;
+        padding: 15px 20px;
+    }
+    .modal-title {
+        color: #333;
+        font-size: 1.25rem;
+    }
+    .modal-body {
+        padding: 20px;
+    }
+    .form-group {
+        margin-bottom: 15px;
+    }
+    label {
+        font-weight: bold;
+        color: #495057;
+    }
+    .form-control {
+        border-radius: 5px;
+    }
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        padding: 10px 20px;
+        font-size: 1rem;
+        border-radius: 5px;
+    }
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+</style>
+
 <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
         <div class="modal-header">
             <h5 class="modal-title">Ajouter un produit</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
             {{ form_start(form) }}
             {{ form_widget(form) }}
             <button type="submit" class="btn btn-primary">Ajouter</button>
+            <a href="{{ path('app_productsseller') }}" class="btn btn-secondary">Annuler</a>
             {{ form_end(form) }}
         </div>
     </div>

@@ -20,14 +20,9 @@ class AddProductType extends AbstractType
             ->add('description')
             ->add('image_url')
             ->add('price')
-            ->add('fav')
             ->add('status')
             ->add('categories', EntityType::class, [
                 'class' => Category::class,
-                'choice_label' => 'id',
-            ])
-            ->add('orders', EntityType::class, [
-                'class' => Order::class,
                 'choice_label' => 'id',
             ])
         ;
