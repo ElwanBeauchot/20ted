@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Produits{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1 class="mb-4">Liste des Produits</h1>
+        <a href="" class="btn btn-success mb-3">
+            Ajouter un produit
+        </a>
+
+        <table class="table table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Titre</th>
+                    <th>Description</th>
+                    <th>Prix</th>
+                    <th>Statut</th>
+                    <th>Image</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                    <tr>
+                        <td>{{ product.id }}</td>
+                        <td>{{ product.title }}</td>
+                        <td>{{ product.description|slice(0, 50) ~ '...' }}</td>
+                        <td>{{ product.price|number_format(2, ',', ' ') }} €</td>
+                        <td>{{ product.status }}</td>
+                        <td>
+                            <img src="{{ product.image }}" alt="{{ product.title }}" class="img-fluid">
+                        </td>
+                        {# <td>
+                            <a href="{{ path('app_product_edit', {'id': product.id}) }}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-edit"></i> Modifier
+                            </a>
+                            <a href="{{ path('app_product_delete', {'id': product.id}) }}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?');">
+                                <i class="fas fa-trash"></i> Supprimer
+                            </a>
+                        </td> #}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
