@@ -40,7 +40,7 @@ class ProductsSellerController extends AbstractController
         // ];
 
         return $this->render('products_seller/index.html.twig', [
-            'products' => $my_products,
+            'my_products' => $my_products,
         ]);
     }
 }
