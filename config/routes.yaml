@@ -3,3 +3,13 @@ controllers:
         path: ../src/Controller/
         namespace: App\Controller
     type: attribute
+
+add_favorite:
+    path: /add-favorite/{productId}
+    controller: App\Controller\FavoriteController::addFavorite
+    methods: [POST]
+
+remove_favorite:
+    path: /remove-favorite/{productId}
+    controller: App\Controller\FavoriteController::removeFavorite
+    methods: [ POST ]
