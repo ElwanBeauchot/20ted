@@ -3,22 +3,22 @@
 namespace App\Controller;
 
 use App\Entity\Product;
-use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\MakerBundle\Security\Model\Authenticator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 class ProductsSellerController extends AbstractController
 {
-    public function __construct(private EntityManagerInterface $entityManagerInterface, private ProductRepository $productRepository)
+    public function __construct(private EntityManagerInterface $entityManagerInterface)
     {
     }
     #[Route('/productsseller', name: 'app_productsseller')]
     public function index(): Response
     {
         
-        $my_products = $this->productRepository->findBy(['user' => $this->getUser()]);
+        $my_products = $this->entityManagerInterface->getRepository(Product::class)->findBy(['users' => $this->getUser()]);
         // $my_products=[
         //     [
         //         'id' => 1,
