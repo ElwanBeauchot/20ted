@@ -17,6 +17,11 @@ class UserController extends AbstractController
     #[Route('/user/me', name: 'app_me')]
     public function edit(): Response
     {        
+        //////////////////security////////////////////
+        if($this->getUser() === null){
+            return $this->redirectToRoute('app_login');
+        }
+        //////////////////////////////////////////////        
         $bMe = true;
         $my_products = $this->entityManagerInterface->getRepository(Product::class)->findBy(['users' => $this->getUser()]);
 
@@ -29,6 +34,12 @@ class UserController extends AbstractController
     #[Route('/user/{id}', name: 'app_user')]
     public function index($id): Response
     {
+        //////////////////security////////////////////
+        if($this->getUser() === null){
+            return $this->redirectToRoute('app_login');
+        }
+        //////////////////////////////////////////////
+        
         $bMe = false;
         $user = $this->entityManagerInterface->getRepository(SecurityUser::class)->find($id);
         $my_products = $this->entityManagerInterface->getRepository(Product::class)->findBy(['users' => $user]);

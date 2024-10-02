@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Entity\Category;
 use App\Entity\Product;
 use App\Form\AddProductType;
 use Doctrine\ORM\EntityManagerInterface;
@@ -21,6 +20,11 @@ class PopupProductController extends AbstractController
     #[Route('/user/me/add-product', name: 'app_popup_product')]
     public function index(Request $request): Response
     {
+        //////////////////security////////////////////
+        if($this->getUser() === null){
+            return $this->redirectToRoute('app_login');
+        }
+        //////////////////////////////////////////////
         
         $new_product = new Product();
         $form = $this->createForm(AddProductType::class, $new_product);
@@ -41,8 +45,18 @@ class PopupProductController extends AbstractController
     #[Route('/user/me/edit-product/{id}', name: 'app_popup_product_edit')]
     public function edit(Request $request, $id): Response
     {
-
         $update_product = $this->entityManagerInterface->getRepository(Product::class)->find($id);
+
+        //////////////////security////////////////////
+        if($this->getUser() === null){
+            return $this->redirectToRoute('app_login');
+        }else if($update_product === null){
+            return $this->redirectToRoute('app_me');
+        }else if($this->getUser() !== $this->entityManagerInterface->getRepository(Product::class)->find($id)->getUsers()){
+            return $this->redirectToRoute('app_me');
+        }
+        //////////////////////////////////////////////
+
         $form = $this->createForm(AddProductType::class, $update_product);
         $form->handleRequest ($request );
 
@@ -60,8 +74,18 @@ class PopupProductController extends AbstractController
     #[Route('/user/me/delete-product/{id}', name: 'app_popup_product_delete')]
     public function delete($id): Response
     {
-
         $update_product = $this->entityManagerInterface->getRepository(Product::class)->find($id);
+
+         //////////////////security////////////////////
+        if($this->getUser() === null){
+            return $this->redirectToRoute('app_login');
+        }else if($update_product === null){
+            return $this->redirectToRoute('app_me');
+        }else if($this->getUser() !== $this->entityManagerInterface->getRepository(Product::class)->find($id)->getUsers()){
+            return $this->redirectToRoute('app_me');
+        }
+        //////////////////////////////////////////////
+
         $this->entityManagerInterface->remove($update_product);
         $this->entityManagerInterface->flush();
 
