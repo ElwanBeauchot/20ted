@@ -33,7 +33,6 @@ class PopupProductController extends AbstractController
             $new_product->setUsers($this->getUser());
             $new_product->setFav(0);
             $new_product->setStatus(1);
-            $new_product->setHoliday(0);
 
             try {
                 $this->entityManagerInterface->persist($new_product);
@@ -90,12 +89,17 @@ class PopupProductController extends AbstractController
     }
 
     #[Route('/user/me/delete-product/{productId}', name: 'app_popup_product_delete')]
-    public function delete($productId): Response
+    public function delete($productId): JsonResponse
     {
         $product = $this->entityManagerInterface->getRepository(Product::class)->find($productId);
-        $this->entityManagerInterface->remove($product);
-        $this->entityManagerInterface->flush();
-        return $this->redirectToRoute('app_me');
+
+        try {
+            $this->entityManagerInterface->remove($product);
+            $this->entityManagerInterface->flush();
+            return $this->json(['success' => true, 'message' => 'Product deleted successfully']);
+        } catch (\Exception $e) {
+            return $this->json(['success' => false, 'message' => $e->getMessage()], 500);
+        }
     }
 
     #[Route('/user/me/billspdf', name: 'app_popup_product_billspdf')]
@@ -112,10 +116,10 @@ class PopupProductController extends AbstractController
         $revenu = 0;
         $total = 0;
         foreach($myOrdersSeller as $order){
-            $revenu += $order->getAmount();
+            $revenu += $order->getProducts()->getPrice();
         }
         foreach($myOrdersBuyer as $order){
-            $depense += $order->getAmount();
+            $depense += $order->getProducts()->getPrice();
         }
         $total += $revenu - $depense;
 
