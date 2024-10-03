@@ -29,6 +29,10 @@ class Message
     #[ORM\JoinColumn(nullable: false)]
     private ?SecurityUser $buyer = null;
 
+    #[ORM\ManyToOne(targetEntity: SecurityUser::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?SecurityUser $sender = null;
+
     public function __construct()
 {
     $this->date = new \DateTime();
@@ -86,4 +90,17 @@ class Message
 
         return $this;
     }
+
+    public function getSender(): ?SecurityUser
+    {
+        return $this->sender;
+    }
+
+    public function setSender(?SecurityUser $sender): static
+    {
+        $this->sender = $sender;
+
+        return $this;
+    }
+
 }
