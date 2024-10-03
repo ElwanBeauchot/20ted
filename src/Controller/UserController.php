@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Product;
 use App\Entity\SecurityUser;
+use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +16,7 @@ class UserController extends AbstractController
     {
     }
     #[Route('/user/me', name: 'app_me')]
-    public function edit(): Response
+    public function me(CategoryRepository $categoryRepository): Response
     {        
         //////////////////security////////////////////
         if($this->getUser() === null){
@@ -23,17 +24,21 @@ class UserController extends AbstractController
         }
         //////////////////////////////////////////////        
         $bMe = true;
-        $my_products = $this->entityManagerInterface->getRepository(Product::class)->findBy(['users' => $this->getUser()]);
+        $catalogUser = true;
+        $productList = $this->entityManagerInterface->getRepository(Product::class)->findBy(['users' => $this->getUser()]);
+        $categoryList = $categoryRepository->findAll();
 
-        return $this->render('user/index.html.twig', [
-            'my_products' => $my_products,
+        return $this->render('catalog/index.html.twig', [
+            'productList' => $productList,
+            'categoryList' => $categoryList,
             'bMe' => $bMe,
+            'catalogUser' => $catalogUser,
             'user' => $this->getUser(),
         ]);
     }
 
     #[Route('/user/{id}', name: 'app_user')]
-    public function index($id): Response
+    public function index($id, CategoryRepository $categoryRepository): Response
     {
         $user = $this->entityManagerInterface->getRepository(SecurityUser::class)->find($id);
         //////////////////security////////////////////
@@ -47,10 +52,14 @@ class UserController extends AbstractController
         //////////////////////////////////////////////
         
         $bMe = false;
-        $my_products = $this->entityManagerInterface->getRepository(Product::class)->findBy(['users' => $user]);
+        $catalogUser = true;
+        $productList = $this->entityManagerInterface->getRepository(Product::class)->findBy(['users' => $user]);
+        $categoryList = $categoryRepository->findAll();
 
-        return $this->render('user/index.html.twig', [
-            'my_products' => $my_products,
+        return $this->render('catalog/index.html.twig', [
+            'productList' => $productList,
+            'categoryList' => $categoryList,
+            'catalogUser' => $catalogUser,
             'bMe' => $bMe,
             'user' => $user,
         ]);

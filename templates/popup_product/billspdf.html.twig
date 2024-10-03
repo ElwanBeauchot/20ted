@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Factures</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        h1 { color: #333; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Vos factures</h1>
+
+    <h2>Commande(s) vendue(s)</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Acheteur</th>
+                <th>Produit</th>
+                <th>Prix</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in myOrdersSeller %}
+                <tr>
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.buyer.email }}</td>
+                    <td>{{ order.product.name }}</td>
+                    <td>{{ order.product.price }} €</td>
+                    <td>{{ order.createdAt|date('d/m/Y') }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Commande(s) achetée(s)</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Vendeur</th>
+                <th>Produit</th>
+                <th>Prix</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in myOrdersBuyer %}
+                <tr>
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.seller.email }}</td>
+                    <td>{{ order.product.name }}</td>
+                    <td>{{ order.product.price }} €</td>
+                    <td>{{ order.createdAt|date('d/m/Y') }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

@@ -2,13 +2,9 @@
 
 namespace App\Controller;
 
-use App\Entity\Product;
-use App\Entity\SecurityUser;
 use App\Repository\CategoryRepository;
 use App\Repository\ProductRepository;
-use App\Repository\SecurityUserRepository;
 use App\Service\FavoriteService;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -24,6 +20,8 @@ class ProductBuyerController extends AbstractController
 
         $productList = $productRepository->findBySearch($categoryId, $searchTerm);
         $categoryList = $categoryRepository->findAll();
+        $bMe = false;
+        $catalogUser = false;
 
         foreach ($productList as $product) {
             $favoriteService->updateFav($product);
@@ -33,6 +31,9 @@ class ProductBuyerController extends AbstractController
             'controller_name' => 'ProductBuyerController',
             'productList' => $productList,
             'categoryList' => $categoryList,
+            'bMe' => $bMe,
+            'catalogUser' => $catalogUser,
+            'user' => $this->getUser(),
         ]);
     }
 
