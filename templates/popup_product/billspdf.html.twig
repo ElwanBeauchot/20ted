@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Factures</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        h1 { color: #333; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body>
+    <h1>Vos factures</h1>
+
+    <h2>Produit(s) vendu(s)</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Commande</th>
+                <th>Acheteur</th>
+                <th>Produit</th>
+                <th>Prix</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in myOrdersSeller %}
+                <tr>
+                    <td>N°{{ order.id }}</td>
+                    <td>{{ order.buyer.email }}</td>
+                    <td>{{ order.products.title }} | {{ order.products.description }} | {{ order.products.categories.name }}</td>
+                    <td>{{ order.products.price }} €</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2>Produit(s) acheté(s)</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Commande</th>
+                <th>Vendeur</th>
+                <th>Produit</th>
+                <th>Prix</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in myOrdersBuyer %}
+                <tr>
+                    <td>N°{{ order.id }}</td>
+                    <td>{{ order.seller.email }}</td>
+                    <td>{{ order.products.title }} | {{ order.products.description }} | {{ order.products.categories.name }}</td>
+                    <td>{{ order.products.price }} €</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    <br>
+    <h2>Récapitulatif</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Depense</th>
+                <th>Revenu</th>
+                <th>Total</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>- {{ depense }} €</td>
+                <td>+ {{ revenu }} €</td>
+                <td>{% if total > 0 %}+ {% endif %}{{ total }} €</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

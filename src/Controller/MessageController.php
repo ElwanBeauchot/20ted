@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Message;
+use App\Entity\Notification;
 use App\Entity\Product;
 use App\Entity\SecurityUser;
 use App\Form\MessageType;
@@ -23,14 +24,16 @@ class MessageController extends AbstractController
     public function index(MessageRepository $messageRepository): Response
     {
         $user = $this->getUser();
-        if (!$user) {
+        //////////////////////////////////////////////
+        if($user === null){
             return $this->redirectToRoute('app_login');
         }
+        //////////////////////////////////////////////
 
         $messages = $messageRepository->findLastMessages($user);
 
         foreach ($messages as $message) {
-            if ($message->getBuyer()->getId() === $user->getId()) {
+            if ($message->getBuyer()->getId() == $user->getId()) {
                 $message->interlocuteur = $message->getProducts()->getUsers();
             } else {
                 $message->interlocuteur = $message->getBuyer();
@@ -46,25 +49,43 @@ class MessageController extends AbstractController
     #[Route('/messages/view/{productId}/{buyerId}/{sellerId}', name: 'view_message')]
     public function view(Request $request, MessageRepository $messageRepository, int $productId, int $buyerId, int $sellerId): Response
     {
-        $user = $this->getUser();
-        if (!$user) {
+        $buyer = $this->entityManager->getRepository(SecurityUser::class)->find($buyerId);
+        $seller = $this->entityManager->getRepository(SecurityUser::class)->find($sellerId);
+        
+        //////////////////////////////////////////////
+        if($this->getUser() === null){
             return $this->redirectToRoute('app_login');
+        }elseif($this->getUser() !== $buyer && $this->getUser() !== $seller){
+            return $this->redirectToRoute('app_messages');
         }
+        //////////////////////////////////////////////
+
 
         $messages = $messageRepository->showDiscussion($productId, $buyerId, $sellerId);
 
-        $buyer = $this->entityManager->getRepository(SecurityUser::class)->find($buyerId);
         $product = $this->entityManager->getRepository(Product::class)->find($productId);
+        $seller = $this->entityManager->getRepository(SecurityUser::class)->find($sellerId);
+        $user = $this->getUser()->getId();
 
         $message = new Message();
         $form = $this->createForm(MessageType::class, $message);
         $form->handleRequest($request);
 
+
         if ($form->isSubmitted() && $form->isValid()) {
             $message->setBuyer($buyer);
             $message->setSender($this->getUser());
             $message->setProducts($product);
+
+            $notification = new Notification();
+            $notification->setSeller($seller);
+            $notification->setBuyer($buyer);
+            $notification->setProduct($product);
+            $notification->setText("Vous avez reçu un message !");
+            $notification->setSender($user);
+
             $this->entityManager->persist($message);
+            $this->entityManager->persist($notification);
             $this->entityManager->flush();
             return $this->redirectToRoute('view_message', [
                 'productId' => $productId,

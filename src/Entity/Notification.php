@@ -35,6 +35,13 @@ class Notification
     #[ORM\ManyToOne(inversedBy: 'notificationOffer')]
     private ?Offer $offer = null;
 
+    #[ORM\Column]
+    private ?int $sender = null;
+    public function __construct()
+    {
+        $this->date = new \DateTime();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -108,6 +115,18 @@ class Notification
     public function setOffer(?Offer $offer): static
     {
         $this->offer = $offer;
+
+        return $this;
+    }
+
+    public function getSender(): ?int
+    {
+        return $this->sender;
+    }
+
+    public function setSender(int $sender): static
+    {
+        $this->sender = $sender;
 
         return $this;
     }
