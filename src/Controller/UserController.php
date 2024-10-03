@@ -28,6 +28,7 @@ class UserController extends AbstractController
         return $this->render('user/index.html.twig', [
             'my_products' => $my_products,
             'bMe' => $bMe,
+            'user' => $this->getUser(),
         ]);
     }
 
@@ -51,6 +52,7 @@ class UserController extends AbstractController
         return $this->render('user/index.html.twig', [
             'my_products' => $my_products,
             'bMe' => $bMe,
+            'user' => $user,
         ]);
     }
 }
