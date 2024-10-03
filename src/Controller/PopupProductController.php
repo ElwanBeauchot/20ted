@@ -36,6 +36,7 @@ class PopupProductController extends AbstractController
         if ($form->isSubmitted () && $form->isValid()) {
             $new_product->setUsers($this->getUser());
             $new_product->setFav(0);
+            $new_product->setHoliday(0);
             $this->entityManagerInterface->persist($new_product);
             $this->entityManagerInterface->flush();
             return $this->redirectToRoute('app_me');

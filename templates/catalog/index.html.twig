@@ -124,6 +124,12 @@
             width: 90%;
             display: flex;
             flex-direction: row;
+            justify-content: space-evenly;
+            align-items: center;
+            background-color: #E8E0D2;
+            border-radius: 15px;
+            box-shadow: 0 1px 10px rgba(189, 110, 122, 0.5);
+            margin: 2% auto 0;
         }
 
         .modal{
@@ -161,6 +167,48 @@
             border: none;
             cursor: pointer;
         }
+
+        .sort-options, .category-filter, .search-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px; /* Espacement entre les éléments à l'intérieur */
+        }
+
+        .search-bar input {
+            padding: 8px;
+            font-size: 16px;
+            border-radius: 10px;
+            border: 1px solid #BD6E7A; /* Couleur cohérente avec le thème */
+            box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1); /* Légère ombre */
+        }
+
+        select {
+            padding: 8px;
+            border-radius: 10px;
+            border: 1px solid #BD6E7A;
+            background-color: white;
+            font-size: 16px;
+        }
+
+        #show-favorites {
+            background-color: #BD6E7A; /* Cohérent avec les boutons de la page */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #show-favorites:hover {
+            background-color: #a65a65;
+        }
+
+        .unavailable{
+            opacity: 60%;
+        }
+    </style>
+
 
     </style>
     {% if catalogUser %}
@@ -222,8 +270,8 @@
     </div>
     <div class="wrapper">
         {% for product in productList %}
-            {% if product.status %}
-                <div  class="single-card" data-category-id="{{ product.categories.id }}">
+            {% if product.status  %}
+                <div  class="single-card {% if product.holiday and bMe %} unavailable {% endif %}" {% if product.holiday and not bMe %} style="display: none" {% endif %}" data-category-id="{{ product.categories.id }}">
                     <div class="img-area">
                         <img src="{{ product.imageUrl }}" alt="">
                         <div class="overlay">
