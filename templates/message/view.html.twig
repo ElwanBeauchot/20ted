@@ -1,15 +1,85 @@
-{# templates/message/view.html.twig #}
-
 {% extends 'base.html.twig' %}
 
 {% block title %}Détails du Message{% endblock %}
 
 {% block body %}
-    <h1>Détails du Message</h1>
+    <style>
+        .message-bubble {
+            background-color: #f0f4c3;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 15px;
+            max-width: 80%;
+            position: relative;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
 
-    <p>Date: {{ message.date|date('Y-m-d H:i') }}</p>
-    <p>Message {{ message.text }}</p>
+        .message-bubble::after {
+            content: "";
+            position: absolute;
+            top: 15px;
+            left: -10px;
+            border-width: 10px;
+            border-style: solid;
+            border-color: transparent #f0f4c3 transparent transparent;
+        }
+
+        .message-bubble.right {
+            background-color: #d1c4e9; /* Couleur pour les messages de l'utilisateur */
+            margin-left: auto; /* Pousse à droite */
+            text-align: right; /* Aligne le texte à droite */
+        }
+
+        .message-bubble.left {
+            background-color: #f0f4c3; /* Couleur pour les messages de l'interlocuteur */
+            text-align: left; /* Aligne le texte à gauche */
+        }
+
+        h1 {
+            font-size: 1.8em;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .message-info {
+            font-size: 1em;
+            color: #555;
+            margin-bottom: 10px;
+        }
+
+        a {
+            display: inline-block;
+            padding: 8px 15px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        a:hover {
+            background-color: #0056b3;
+        }
+    </style>
+
+    <h1>Détails du Message</h1>
+    {% for message in messages %}
+        <div class="message-bubble
+            {% if message.sender.id == app.user.id %}
+                right
+            {% else %}
+                left
+            {% endif %}">
+            <p class="message-info"> {{ message.sender.username }}</p>
+            <p>{{ message.text }}</p>
+            <p class="message-info"> {{ message.date|date('Y-m-d H:i') }}</p>
+        </div>
+    {% endfor %}
+
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <button type="submit" class="btn btn-primary">Ajouter</button>
+    {{ form_end(form) }}
+
     <a href="{{ path('app_messages') }}">Retour à la liste des messages</a>
 {% endblock %}
-
-

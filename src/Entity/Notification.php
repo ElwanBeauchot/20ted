@@ -2,13 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\MessageRepository;
-use Doctrine\Common\Collections\ArrayCollection;
+use App\Repository\NotificationRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: MessageRepository::class)]
-class Message
+#[ORM\Entity(repositoryClass: NotificationRepository::class)]
+class Notification
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -21,22 +20,20 @@ class Message
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $date = null;
 
-    #[ORM\ManyToOne(inversedBy: 'messages')]
+    #[ORM\ManyToOne(inversedBy: 'notificationSeller')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?Product $products = null;
+    private ?SecurityUser $seller = null;
 
-    #[ORM\ManyToOne(inversedBy: 'messages')]
+    #[ORM\ManyToOne(inversedBy: 'notificationBuyer')]
     #[ORM\JoinColumn(nullable: false)]
     private ?SecurityUser $buyer = null;
 
-    #[ORM\ManyToOne(targetEntity: SecurityUser::class)]
+    #[ORM\ManyToOne(inversedBy: 'notificationProduct')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?SecurityUser $sender = null;
+    private ?Product $product = null;
 
-    public function __construct()
-{
-    $this->date = new \DateTime();
-}
+    #[ORM\ManyToOne(inversedBy: 'notificationOffer')]
+    private ?Offer $offer = null;
 
     public function getId(): ?int
     {
@@ -67,14 +64,14 @@ class Message
         return $this;
     }
 
-    public function getProducts(): ?Product
+    public function getSeller(): ?SecurityUser
     {
-        return $this->products;
+        return $this->seller;
     }
 
-    public function setProducts(?Product $products): static
+    public function setSeller(?SecurityUser $seller): static
     {
-        $this->products = $products;
+        $this->seller = $seller;
 
         return $this;
     }
@@ -91,16 +88,27 @@ class Message
         return $this;
     }
 
-    public function getSender(): ?SecurityUser
+    public function getProduct(): ?Product
     {
-        return $this->sender;
+        return $this->product;
     }
 
-    public function setSender(?SecurityUser $sender): static
+    public function setProduct(?Product $product): static
     {
-        $this->sender = $sender;
+        $this->product = $product;
 
         return $this;
     }
 
+    public function getOffer(): ?Offer
+    {
+        return $this->offer;
+    }
+
+    public function setOffer(?Offer $offer): static
+    {
+        $this->offer = $offer;
+
+        return $this;
+    }
 }
