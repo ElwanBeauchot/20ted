@@ -16,9 +16,14 @@ use Symfony\Component\Routing\Attribute\Route;
 class AccountPageController extends AbstractController
 {
 
-    #[Route('/account/page', name: 'app_account_page')]
+    #[Route('/user/me/info', name: 'app_account_page')]
     public function index(SecurityUserRepository $SecurityUserRepository, Request $request,EntityManagerInterface $entityManager): Response
     {
+        //////////////////security////////////////////
+        if($this->getUser() === null){
+            return $this->redirectToRoute('app_login');
+        }
+        //////////////////////////////////////////////
 
         //récupère les données utilisateurs
 
