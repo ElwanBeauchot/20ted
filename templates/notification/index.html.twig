@@ -57,7 +57,7 @@
         {% for message in messages %}
             <li class="notification-item">
                 {% if message.seller.id != app.user.id %}
-                <p><strong> {{ message.seller.username }} - {{ message.product?title }}</strong></p>
+                <p><strong> {{ message.seller.username }} - {{ message.product.title }}</strong></p>
                 {% else %}
                     <h3><strong> {{ message.buyer.username }} - {{ message.product.title }}</strong></h3>
                 {% endif %}
