@@ -1,16 +1,22 @@
 {% extends 'base.html.twig' %}
 
-
 {% block body %}
     <style>
+        body {
+            background: #E8E0D2; /* Couleur de fond */
+            font-family: 'Montserrat', sans-serif;
+            margin: 0; /* Supprime les marges par défaut */
+            padding: 0; /* Supprime le remplissage par défaut */
+        }
+
         ul {
             list-style-type: none;
             padding: 0;
         }
         .message-bubble {
-            background-color: #e1f5fe;
+            background-color: #cfe3ff; /* Couleur de la bulle de message */
             padding: 15px;
-            margin-bottom: 10px;
+            margin-bottom: 20px; /* Espace entre les messages */
             border-radius: 15px;
             max-width: 80%;
             position: relative;
@@ -23,7 +29,7 @@
             left: -10px;
             border-width: 10px;
             border-style: solid;
-            border-color: transparent #e1f5fe transparent transparent;
+            border-color: transparent #cfe3ff transparent transparent; /* Couleur de la bulle */
         }
         h3 {
             margin: 0 0 10px 0;
@@ -38,16 +44,17 @@
             font-size: 0.8em;
             color: #999;
         }
-        a {
+        .access_message {
             display: inline-block;
             padding: 8px 15px;
-            background-color: #007bff;
+            background-color: #007bff; /* Couleur du bouton */
             color: white;
             text-decoration: none;
             border-radius: 5px;
+            margin-top: 10px; /* Espace entre le lien et le message */
         }
-        a:hover {
-            background-color: #0056b3;
+        .access_message:hover {
+            background-color: #0056b3; /* Couleur au survol */
         }
     </style>
 
@@ -57,7 +64,7 @@
                 <h3>{{ message.interlocuteur.username }} - {{ message.products.title }}</h3>
                 <p>{{ message.text }}</p>
                 <p class="message-date"><em>{{ message.date|date('Y-m-d H:i') }}</em></p>
-                <a href="{{ path('view_message', { 'productId': message.products.id, 'buyerId': message.buyer.id, 'sellerId': message.products.users.id }) }}">Voir la discussion</a>
+                <a class="access_message" href="{{ path('view_message', { 'productId': message.products.id, 'buyerId': message.buyer.id, 'sellerId': message.products.users.id }) }}">Voir la discussion</a>
             </div>
         {% else %}
             <p>Aucun message trouvé.</p>
