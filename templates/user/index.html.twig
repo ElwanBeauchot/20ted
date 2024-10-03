@@ -49,11 +49,12 @@
     </style>
 
     <div class="container mt-4">
-        <h1 class="mb-4">{{user.username}} | {{user.wallet|number_format(2, ',', ' ')}} €</h1>
+        <h1 class="mb-4">{{user.username}} | {{user.wallet|number_format(2, '.', ' ')}} €</h1>
         {% if bMe %}
         <a href="{{ path('app_popup_product') }}" id="popup">
             Ajouter un produit
         </a>
+        <a href="{{ path('app_account_page')}}">Modifier Profil</a>
         {% endif %}
         <table class="table table-striped">
             <thead class="thead-dark">
@@ -80,7 +81,7 @@
                     <td>{{ product.id }}</td>
                     <td>{{ product.title }}</td>
                     <td>{{ product.description}}</td>
-                    <td>{{ product.price}} €</td>
+                    <td>{{ product.price|number_format(2, '.', ' ')}} €</td>
                     <td>{{ product.status }}</td>
                     <td>
                         <img src="{{ product.imageUrl }}" alt="{{ product.title }}" class="img-fluid">
