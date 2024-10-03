@@ -1,45 +1,127 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Compte{% endblock %}
+
 {% block body %}
-    <h2>Information utilisateur</h2>
+    <style>
+        body {
+            background: #E8E0D2;
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
 
-    <ul>
-        {% for user in user %}
-            <li>{{ user.username|e }}</li>
-            <li>{{ user.email }}</li>
-            <li>{{ user.password }}</li>
-        {% endfor %}
-    </ul>
-    <br>
+        .container {
+            width: 90%;
+            margin: 6% auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 1px 10px rgba(189, 110, 122, 0.5);
+        }
 
-    <h2>Modifier vos informations</h2>
-    {{ form_start(formUser) }}
-    {{ form_widget(formUser) }}
-    <button type="submit">Mettre à jour les informations</button>
-    {{ form_end(formUser) }}
-    <br>
-    <a href="/reset">change password</a>
-    <br>
+        h2 {
+            color: #BD6E7A;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #BD6E7A;
+            padding-bottom: 5px;
+        }
 
-    <h2>Porte monnaie</h2>
-    <h2>Gérer le porte-monnaie</h2>
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
 
-    {% for message in app.flashes('error') %}
-        <div class="alert alert-danger">
-            {{ message }}
+        li {
+            padding: 8px 0;
+            color: rgba(0, 0, 0, 0.7);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group button {
+            margin-top: 10px; /* Ajoute un espace entre le bouton et le formulaire */
+        }
+
+        button {
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background-color: #BD6E7A;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #A25B6E;
+        }
+
+        .alert {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+
+        a {
+            color: #BD6E7A;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #A25B6E;
+        }
+    </style>
+
+    <div class="container">
+        <h2>Information utilisateur</h2>
+        <ul>
+            {% for user in user %}
+                <li><strong>Nom d'utilisateur:</strong> {{ user.username|e }}</li>
+                <li><strong>Email:</strong> {{ user.email }}</li>
+            {% endfor %}
+        </ul>
+
+        <h2>Modifier vos informations</h2>
+        <div class="form-group">
+            {{ form_start(formUser) }}
+                {{ form_widget(formUser) }}
+                <button type="submit">Mettre à jour les informations</button>
+            {{ form_end(formUser) }}
         </div>
-    {% endfor %}
 
-    {{ form_start(walletForm) }}
-    {{ form_widget(walletForm) }}
-    <button type="submit">Valider</button>
-    {{ form_end(walletForm) }}
-    <br>
+        <a href="/reset">Changer le mot de passe</a>
 
-    {% for user in user %}
-        <li>{{ user.wallet }} €</li>
-    {% endfor %}
-    <br>
+        <h2>Porte-monnaie</h2>
+        <h2>Gérer le porte-monnaie</h2>
 
-    <h2>Vacances</h2>
+        {% for message in app.flashes('error') %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+        {% endfor %}
+
+        <div class="form-group">
+            {{ form_start(walletForm) }}
+                {{ form_widget(walletForm) }}
+                <button type="submit">Valider</button>
+            {{ form_end(walletForm) }}
+        </div>
+
+        {% for user in user %}
+            <li><strong>Solde:</strong> {{ user.wallet }} €</li>
+        {% endfor %}
+        
+        <h2>Vacances</h2>
     <form action="{{ path('app_set_products_holiday') }}" method="POST">
         <button type="submit">Activer le mode vacances</button>
     </form>
@@ -48,8 +130,7 @@
         <button type="submit">Enlever le mode vacances</button>
     </form>
 
-    <br>
-
-    <h2>Log out</h2>
-    <a href="{{ path('app_logout') }}">Logout</a>
+        <h2>Log out</h2>
+        <a href="{{ path('app_logout') }}">Déconnexion</a>
+    </div>
 {% endblock %}
