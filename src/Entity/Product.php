@@ -62,11 +62,18 @@ class Product
     #[ORM\OneToMany(targetEntity: Offer::class, mappedBy: 'products', orphanRemoval: true)]
     private Collection $offers;
 
+    /**
+     * @var Collection<int, Notification>
+     */
+    #[ORM\OneToMany(targetEntity: Notification::class, mappedBy: 'product', orphanRemoval: true)]
+    private Collection $notificationProduct;
+
     public function __construct()
     {
         $this->favorite = new ArrayCollection();
         $this->messages = new ArrayCollection();
         $this->offers = new ArrayCollection();
+        $this->notificationProduct = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -265,6 +272,36 @@ class Product
             // set the owning side to null (unless already changed)
             if ($offer->getProducts() === $this) {
                 $offer->setProducts(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Notification>
+     */
+    public function getNotificationProduct(): Collection
+    {
+        return $this->notificationProduct;
+    }
+
+    public function addNotificationProduct(Notification $notificationProduct): static
+    {
+        if (!$this->notificationProduct->contains($notificationProduct)) {
+            $this->notificationProduct->add($notificationProduct);
+            $notificationProduct->setProduct($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotificationProduct(Notification $notificationProduct): static
+    {
+        if ($this->notificationProduct->removeElement($notificationProduct)) {
+            // set the owning side to null (unless already changed)
+            if ($notificationProduct->getProduct() === $this) {
+                $notificationProduct->setProduct(null);
             }
         }
 
