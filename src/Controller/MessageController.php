@@ -22,10 +22,6 @@ class MessageController extends AbstractController
 
         $user = $this->getUser();
 
-        if (!$user) {
-            return $this->redirectToRoute('app_login');
-        }
-
         $messagesBuyer = $messageRepository->findBy(['buyer' => $user] );
         $messagesSeller = $messageRepository->findBySeller($user);
 

@@ -48,6 +48,7 @@ class UserController extends AbstractController
         
         $bMe = false;
         $my_products = $this->entityManagerInterface->getRepository(Product::class)->findBy(['users' => $user]);
+        
 
         return $this->render('user/index.html.twig', [
             'my_products' => $my_products,

@@ -3,9 +3,7 @@
 namespace App\Form;
 
 use App\Entity\Category;
-use App\Entity\Order;
 use App\Entity\Product;
-use App\Entity\SecurityUser;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -20,7 +18,6 @@ class AddProductType extends AbstractType
             ->add('description')
             ->add('image_url')
             ->add('price')
-            ->add('status')
             ->add('categories', EntityType::class, [
                 'class' => Category::class,
                 'choice_label' => 'id',

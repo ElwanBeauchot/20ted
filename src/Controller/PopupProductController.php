@@ -15,7 +15,6 @@ class PopupProductController extends AbstractController
 
     public function __construct(private EntityManagerInterface $entityManagerInterface)
     {
-        
     }
     #[Route('/user/me/add-product', name: 'app_popup_product')]
     public function index(Request $request): Response
@@ -33,6 +32,7 @@ class PopupProductController extends AbstractController
         if ($form->isSubmitted () && $form->isValid()) {
             $new_product->setUsers($this->getUser());
             $new_product->setFav(0);
+            $new_product->setStatus(1);
             $this->entityManagerInterface->persist($new_product);
             $this->entityManagerInterface->flush();
             return $this->redirectToRoute('app_me');

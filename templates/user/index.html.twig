@@ -46,6 +46,10 @@
             max-width: 100px;
             height: auto;
         }
+        .text-muted {
+            color: #6c7273;
+            background-color: #d4d2d2;
+        }   
     </style>
 
     <div class="container mt-4">
@@ -56,6 +60,11 @@
         </a>
         <a href="{{ path('app_account_page')}}">Modifier Profil</a>
         {% endif %}
+        <form action="{{ path('app_me') }}" method="GET" class="mb-4">
+            <div class="input">
+                <input type="text"placeholder="Rechercher un produit..." id="search-input">
+            </div> 
+        </form>
         <table class="table table-striped">
             <thead class="thead-dark">
                 <tr>
@@ -77,23 +86,31 @@
                 </tr>
                 {% else %}
                 {% for product in my_products %}
-                <tr>
+                <tr {% if product.status != 1 %}class="text-muted"{% endif %}>
                     <td>{{ product.id }}</td>
                     <td>{{ product.title }}</td>
                     <td>{{ product.description}}</td>
                     <td>{{ product.price|number_format(2, '.', ' ')}} €</td>
-                    <td>{{ product.status }}</td>
+                    {% if product.status == 1 %}
+                    <td>Disponible</td>
+                    {% else %}
+                    <td>Vendu</td>
+                    {% endif %}
                     <td>
                         <img src="{{ product.imageUrl }}" alt="{{ product.title }}" class="img-fluid">
                     </td>
                     {% if bMe %}
                     <td>
-                        <a href="{{ path('app_popup_product_edit', {'id': product.id}) }}" class="btn btn-sm btn-primary">
-                            <i class="fas fa-edit"></i> Modifier
-                        </a>
-                        <a href="{{ path('app_popup_product_delete', {'id': product.id}) }}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?');">
-                            <i class="fas fa-trash"></i> Supprimer
-                        </a>
+                        {% if product.status == 1 %}
+                            <a href="{{ path('app_popup_product_edit', {'id': product.id}) }}" class="btn btn-sm btn-primary">
+                                <i class="fas fa-edit"></i> Modifier
+                            </a>
+                            <a href="{{ path('app_popup_product_delete', {'id': product.id}) }}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?');">
+                                <i class="fas fa-trash"></i> Supprimer
+                            </a>
+                        {% else %}
+                            <span class="text-muted">Produit vendu</span>
+                        {% endif %}
                     </td>
                     {% endif %}
                 </tr>
@@ -105,9 +122,17 @@
 {% endblock %}
 {% block javascripts %}
    <script>
-      $(function () {
-            $('#popup').on('click', function(){
-                $('#popup').modal('show');
+      document.getElementById('search-input').addEventListener('input', function() {
+            const selectedTitle = this.value.toLowerCase();
+            const cards = document.querySelectorAll('.');
+
+            cards.forEach(card => {
+                const productTitle = card.querySelector('[data-product-title]').getAttribute('data-product-title').toLowerCase();
+                if (selectedTitle === "" || productTitle.includes(selectedTitle)) {
+                    card.style.display = "block";
+                } else {
+                    card.style.display = "none";
+                }
             });
         });
    </script>
