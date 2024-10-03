@@ -40,4 +40,20 @@ class ProductRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
+    public function findBySearch(?int $categoryId, ?string $searchTerm)
+    {
+        $qb = $this->createQueryBuilder('p');
+
+        if ($categoryId) {
+            $qb->andWhere('p.category = :categoryId')
+                ->setParameter('categoryId', $categoryId);
+        }
+
+        if ($searchTerm) {
+            $qb->andWhere('p.title LIKE :searchTerm')
+                ->setParameter('searchTerm', '%' . $searchTerm . '%');
+        }
+
+        return $qb->getQuery()->getResult();
+    }
 }
