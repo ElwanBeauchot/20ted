@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\SecurityUserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -41,6 +43,24 @@ class SecurityUser implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private bool $isVerified = false;
+
+    /**
+     * @var Collection<int, Notification>
+     */
+    #[ORM\OneToMany(targetEntity: Notification::class, mappedBy: 'seller', orphanRemoval: true)]
+    private Collection $notificationSeller;
+
+    /**
+     * @var Collection<int, Notification>
+     */
+    #[ORM\OneToMany(targetEntity: Notification::class, mappedBy: 'buyer', orphanRemoval: true)]
+    private Collection $notificationBuyer;
+
+    public function __construct()
+    {
+        $this->notificationSeller = new ArrayCollection();
+        $this->notificationBuyer = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -149,6 +169,66 @@ class SecurityUser implements UserInterface, PasswordAuthenticatedUserInterface
     public function setVerified(bool $isVerified): static
     {
         $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Notification>
+     */
+    public function getNotificationSeller(): Collection
+    {
+        return $this->notificationSeller;
+    }
+
+    public function addNotificationSeller(Notification $notificationSeller): static
+    {
+        if (!$this->notificationSeller->contains($notificationSeller)) {
+            $this->notificationSeller->add($notificationSeller);
+            $notificationSeller->setSeller($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotificationSeller(Notification $notificationSeller): static
+    {
+        if ($this->notificationSeller->removeElement($notificationSeller)) {
+            // set the owning side to null (unless already changed)
+            if ($notificationSeller->getSeller() === $this) {
+                $notificationSeller->setSeller(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Notification>
+     */
+    public function getNotificationBuyer(): Collection
+    {
+        return $this->notificationBuyer;
+    }
+
+    public function addNotificationBuyer(Notification $notificationBuyer): static
+    {
+        if (!$this->notificationBuyer->contains($notificationBuyer)) {
+            $this->notificationBuyer->add($notificationBuyer);
+            $notificationBuyer->setBuyer($this);
+        }
+
+        return $this;
+    }
+
+    public function removeNotificationBuyer(Notification $notificationBuyer): static
+    {
+        if ($this->notificationBuyer->removeElement($notificationBuyer)) {
+            // set the owning side to null (unless already changed)
+            if ($notificationBuyer->getBuyer() === $this) {
+                $notificationBuyer->setBuyer(null);
+            }
+        }
 
         return $this;
     }
