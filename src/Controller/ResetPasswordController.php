@@ -39,7 +39,7 @@ class ResetPasswordController extends AbstractController
             // The session is cleaned up after the password has been changed.
             //$this->cleanSessionAfterReset();
 
-            return $this->redirectToRoute('app_login');
+            return $this->redirectToRoute('app_account_page');
         }
 
         return $this->render('reset_password/reset.html.twig', [
