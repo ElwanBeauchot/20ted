@@ -3,49 +3,80 @@
 namespace App\Controller;
 
 use App\Entity\Message;
+use App\Entity\Product;
+use App\Entity\SecurityUser;
+use App\Form\MessageType;
 use App\Repository\MessageRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 
 class MessageController extends AbstractController
 {
-    #[Route('/user/me/messages', name: 'app_messages_buyer')]
-    public function indexBuyer(MessageRepository $messageRepository): Response
+    public function __construct(private EntityManagerInterface $entityManager)
     {
-        //////////////////security////////////////////
-        if($this->getUser() === null){
-            return $this->redirectToRoute('app_login');
-        }
-        //////////////////////////////////////////////
-
+    }
+    #[Route('/messages', name: 'app_messages')]
+    public function index(MessageRepository $messageRepository): Response
+    {
         $user = $this->getUser();
-
         if (!$user) {
             return $this->redirectToRoute('app_login');
         }
 
-        $messagesBuyer = $messageRepository->findBy(['buyer' => $user] );
-        $messagesSeller = $messageRepository->findBySeller($user);
+        $messages = $messageRepository->findLastMessages($user);
+
+        foreach ($messages as $message) {
+            if ($message->getBuyer()->getId() === $user->getId()) {
+                $message->interlocuteur = $message->getProducts()->getUsers();
+            } else {
+                $message->interlocuteur = $message->getBuyer();
+            }
+        }
 
 
         return $this->render('message/index.html.twig', [
-            'messages' => $messagesSeller,
+            'messages' => $messages,
         ]);
     }
 
-    #[Route('/user/{id}/messages', name: 'view_message')]
-    public function view(Message $message): Response
+    #[Route('/messages/view/{productId}/{buyerId}/{sellerId}', name: 'view_message')]
+    public function view(Request $request, MessageRepository $messageRepository, int $productId, int $buyerId, int $sellerId): Response
     {
-        //////////////////security////////////////////
-        if($this->getUser() === null){
+        $user = $this->getUser();
+        if (!$user) {
             return $this->redirectToRoute('app_login');
         }
-        //////////////////////////////////////////////
+
+        $messages = $messageRepository->showDiscussion($productId, $buyerId, $sellerId);
+
+        $buyer = $this->entityManager->getRepository(SecurityUser::class)->find($buyerId);
+        $product = $this->entityManager->getRepository(Product::class)->find($productId);
+
+        $message = new Message();
+        $form = $this->createForm(MessageType::class, $message);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $message->setBuyer($buyer);
+            $message->setSender($this->getUser());
+            $message->setProducts($product);
+            $this->entityManager->persist($message);
+            $this->entityManager->flush();
+            return $this->redirectToRoute('view_message', [
+                'productId' => $productId,
+                'buyerId' => $buyerId,
+                'sellerId' => $sellerId,
+            ]);
+
+        }
 
         return $this->render('message/view.html.twig', [
-            'message' => $message,
+            'messages' => $messages,
+            'form' => $form->createView(),
         ]);
     }
 }
