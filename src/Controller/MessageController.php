@@ -29,14 +29,6 @@ class MessageController extends AbstractController
 
         $messages = $messageRepository->findLastMessages($user);
 
-        foreach ($messages as $message) {
-            if ($message->getBuyer()->getId() === $user->getId()) {
-                $message->interlocuteur = $message->getProducts()->getUsers();
-            } else {
-                $message->interlocuteur = $message->getBuyer();
-            }
-        }
-
 
         return $this->render('message/index.html.twig', [
             'messages' => $messages,
