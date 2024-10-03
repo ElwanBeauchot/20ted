@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Product;
 use App\Repository\SecurityUserRepository;
 use App\Entity\SecurityUser;
 use App\Form\FormupdateType;
@@ -15,6 +16,9 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class AccountPageController extends AbstractController
 {
+    public function __construct(private EntityManagerInterface $entityManagerInterface)
+    {
+    }
 
     #[Route('/user/me/info', name: 'app_account_page')]
     public function index(SecurityUserRepository $SecurityUserRepository, Request $request,EntityManagerInterface $entityManager): Response
@@ -55,7 +59,6 @@ class AccountPageController extends AbstractController
         $formPassword->handleRequest($request);
 
         if ($formPassword->isSubmitted() && $formPassword->isValid()) {
-            // Ici, tu peux gérer le mot de passe (pour l'instant, nous ne faisons rien avec le mot de passe)
             $entityManager->flush();
             return $this->redirectToRoute('app_account_page');
         }
@@ -91,5 +94,43 @@ class AccountPageController extends AbstractController
             'formPassword' => $formPassword->createView(),
             'walletForm' => $walletform->createView(),
         ]);
+    }
+    #[Route('/user/me/holiday', name: 'app_set_products_holiday', methods: ['POST'])]
+    public function setProductsToHoliday(EntityManagerInterface $entityManager): Response
+    {
+        if ($this->getUser() === null) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $user = $this->getUser();
+
+        $products =$this->entityManagerInterface->getRepository(Product::class)->findBy(['users' => $user]);
+
+        foreach ($products as $product) {
+            $product->setHoliday(true);
+        }
+
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_account_page');
+    }
+    #[Route('/user/me/unset-holiday', name: 'app_unset_products_holiday', methods: ['POST'])]
+    public function unsetProductsFromHoliday(EntityManagerInterface $entityManager): Response
+    {
+        if ($this->getUser() === null) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        $user = $this->getUser();
+
+        $products =$this->entityManagerInterface->getRepository(Product::class)->findBy(['users' => $user]);
+
+        foreach ($products as $product) {
+            $product->setHoliday(false);
+        }
+
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_account_page');
     }
 }
