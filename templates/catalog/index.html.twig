@@ -176,6 +176,8 @@
         <button class="add-product" onclick="window.location.href='{{ path('app_popup_product_billspdf') }}'">Télécharger commandes</button>
         {% endif %}
     {% endif %}
+    {#-------------------------------------CATEGORY-------------------------------------#}
+
     <div class="filter-bar">
         <div class="category-filter">
             <label for="category-select">Filter</label>
@@ -190,6 +192,8 @@
             <input type="text" id="search-input" placeholder="Search by title...">
         </div>
     </div>
+    {#-------------------------------------SEARCH-------------------------------------#}
+
     <div class="modal" id="offerModal">
         <div class="modal-content">
             <h2>Make an Offer</h2>
@@ -200,6 +204,8 @@
             <button class="close-modal" id="offerCloseModal">Cancel</button>
         </div>
     </div>
+    {#-------------------------------------MESSAGE-------------------------------------#}
+
     <div class="modal" id="messageModal">
         <div class="modal-content">
             <h2>Send a message</h2>
@@ -208,6 +214,7 @@
             <button class="close-modal" id="messageCloseModal">Cancel</button>
         </div>
     </div>
+    {#-------------------------------------ADD_PRODUCT-------------------------------------#}
     <div class="modal" id="addFormModal">
         <div class="modal-content">
             <h2>Ajouter un produit</h2>
@@ -218,6 +225,7 @@
             {{ form_end(addForm) }}
         </div>
     </div>
+    {#-------------------------------------EDIT_PRODUCT-------------------------------------#}
     <div class="modal" id="editFormModal">
         <div class="modal-content">
             <h2>Edit form</h2>
@@ -262,6 +270,7 @@
         {% endfor %}
     </div>
     <script>
+    {#-------------------------------------SEARCH-------------------------------------#}
         document.getElementById('search-input').addEventListener('input', function() {
             const selectedTitle = this.value.toLowerCase();
             const cards = document.querySelectorAll('.single-card');
@@ -275,6 +284,8 @@
                 }
             });
         });
+    {#-------------------------------------CATEGORY-------------------------------------#}
+
         document.getElementById('category-select').addEventListener('change', function() {
             const selectedCategoryId = this.value;
             const cards = document.querySelectorAll('.single-card');
@@ -288,6 +299,9 @@
                 }
             });
         });
+
+    {#-------------------------------------FAVORITE-------------------------------------#}
+
         document.querySelectorAll('.add-to-fav').forEach(button => {
             button.addEventListener('click', function () {
                 const productId = this.getAttribute('data-id');
@@ -339,6 +353,9 @@
                     });
             });
         });
+
+    {#-------------------------------------OFFER-------------------------------------#}
+
         document.querySelectorAll('.make-offer').forEach(button => {
             button.addEventListener('click', function() {
                 const productId = this.getAttribute('data-id');
@@ -373,6 +390,16 @@
             });
         });
 
+        document.getElementById('offerCloseModal').addEventListener('click', function() {
+            document.getElementById('offerModal').style.display = 'none';
+        });
+
+        document.getElementById('offerPrice').addEventListener('input', function() {
+            document.getElementById('priceOutput').textContent = this.value;
+        });
+
+    {#-------------------------------------MESSAGE-------------------------------------#}
+
         document.querySelectorAll('.send-message').forEach(button => {
             button.addEventListener('click', function() {
                 const productId = this.getAttribute('data-id');
@@ -401,6 +428,13 @@
                 };
             });
         });
+
+        document.getElementById('messageCloseModal').addEventListener('click', function() {
+            document.getElementById('messageModal').style.display = 'none';
+        });
+
+    {#-------------------------------------ADD_PRODUCT-------------------------------------#}
+        
         document.getElementById('addForm').addEventListener('click', function() {
             document.getElementById('addFormModal').style.display = 'flex';
         });
@@ -429,13 +463,15 @@
             });
         });
 
-        document.getElementById('addFormCloseModal').addEventListener('click', closeAddProductModal);
 
         function closeAddProductModal() {
             document.getElementById('addFormModal').style.display = 'none';
             document.getElementById('addProductForm').reset();
         }
+
+        document.getElementById('addFormCloseModal').addEventListener('click', closeAddProductModal);
         
+    {#-------------------------------------EDIT_PRODUCT-------------------------------------#}
         document.querySelectorAll('.edit-product').forEach(button => {
             button.addEventListener('click', function() {
                 const productId = this.getAttribute('data-id');
@@ -497,24 +533,7 @@
 
         document.getElementById('editFormCloseModal').addEventListener('click', closeEditProductModal);
 
-        document.getElementById('messageCloseModal').addEventListener('click', function() {
-            document.getElementById('messageModal').style.display = 'none';
-        });
 
-        document.getElementById('offerCloseModal').addEventListener('click', function() {
-            document.getElementById('offerModal').style.display = 'none';
-        });
 
-        document.getElementById('offerPrice').addEventListener('input', function() {
-            document.getElementById('priceOutput').textContent = this.value;
-        });
-
-        document.getElementById('editFormCloseModal').addEventListener('click', function() {
-            document.getElementById('editFormModal').style.display = 'none';
-        });
-
-        document.getElementById('addFormCloseModal').addEventListener('click', function() {
-            document.getElementById('addFormModal').style.display = 'none';
-        });
     </script>
 {% endblock %}
