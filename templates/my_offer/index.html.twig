@@ -78,9 +78,10 @@
         }
     </style>
 
+    <h1>Mes offres</h1>
     <div class="offer-container">
         {% for offer in offerList %}
-            {% if not offer.status  %}
+            {% if not offer.status %}
                 <div class="offer-box">
                     <div class="offer-details">
                         <div class="offer-product-image">
@@ -100,8 +101,14 @@
                         </div>
                     </div>
                     <div class="offer-buttons">
-                        <button class="btn btn-reject">Refuser Offre</button>
-                        <button class="btn btn-accept">Accepter Offre</button>
+                        <form action="{{ path('app_my_offer_delete', {'id': offer.id}) }}" method="post" style="display:inline-block;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete-offer-' ~ offer.id) }}">
+                            <button class="btn btn-reject" type="submit">Refuser Offre</button>
+                        </form>
+                        <form action="{{ path('app_my_offer_confirm', {'offer': offer.id}) }}" method="post" style="display:inline-block;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('confirm-offer-' ~ offer.id) }}">
+                            <button class="btn btn-accept" type="submit">Accepter Offre</button>
+                        </form>
                     </div>
                 </div>
             {% endif %}

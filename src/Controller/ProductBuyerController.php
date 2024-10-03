@@ -22,16 +22,19 @@ class ProductBuyerController extends AbstractController
         $categoryId = $request->query->get('category');
         $searchTerm = $request->query->get('search');
 
-        $productList = $productRepository->findBySearch($categoryId, $searchTerm);
+        $productList = $productRepository->findAll();
         $categoryList = $categoryRepository->findAll();
-
+        $updatedProductList = [];
         foreach ($productList as $product) {
             $favoriteService->updateFav($product);
+            if($product->getUsers() !== $this->getUser()) {
+                $updatedProductList[] = $product;
+            }
         }
 
         return $this->render('catalog/index.html.twig', [
             'controller_name' => 'ProductBuyerController',
-            'productList' => $productList,
+            'productList' => $updatedProductList,
             'categoryList' => $categoryList,
         ]);
     }
