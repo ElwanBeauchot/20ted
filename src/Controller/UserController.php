@@ -32,10 +32,10 @@ class UserController extends AbstractController
 
         
         $addForm = $this->createForm(AddProductType::class);
-        $addForm->handleRequest ($request );
+        $addForm->handleRequest($request);
 
         $editForm = $this->createForm(AddProductType::class);
-        $editForm->handleRequest ($request );
+        $editForm->handleRequest($request);
 
         return $this->render('catalog/index.html.twig', [
             'productList' => $productList,

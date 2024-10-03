@@ -172,8 +172,8 @@
         </h1>
         {% if bMe %}
         <button class="add-product" id="addForm"> Ajouter un produit</button>
-        <button onclick="window.location.href='{{ path('app_account_page') }}'">Modifier Profil</button>
-        <button onclick="window.location.href='{{ path('app_popup_product_billspdf') }}'">Télécharger commandes</button>
+        <button class="add-product" onclick="window.location.href='{{ path('app_account_page') }}'">Modifier Profil</button>
+        <button class="add-product" onclick="window.location.href='{{ path('app_popup_product_billspdf') }}'">Télécharger commandes</button>
         {% endif %}
     {% endif %}
     <div class="filter-bar">
@@ -218,16 +218,16 @@
             {{ form_end(addForm) }}
         </div>
     </div>
-    {# <div class="modal" id="editFormModal">
+    <div class="modal" id="editFormModal">
         <div class="modal-content">
             <h2>Edit form</h2>
-            {{ form_start(editForm) }}
+            {{ form_start(editForm, {'attr': {'id': 'editProductForm'}}) }}
             {{ form_widget(editForm) }}
             <button class="close-modal" id="editFormSubmit">Modifier</button>
             <button class="close-modal" id="editFormCloseModal">Annuler</button>
             {{ form_end(editForm) }}
         </div>
-    </div> #}
+    </div>
     <div class="wrapper">
         {% for product in productList %}
             {% if product.status %}
@@ -237,8 +237,8 @@
                         <div class="overlay">
                             {% if bMe %}
                             <td>
-                                <button class="edit-product" data-id="{{ product.id }}">Modifier</button>
-                                <button class="delete-order" data-id="{{ product.id }}">Supprimer</button>
+                                <button class="edit-product" data-id="{{ product.id }}"> ✏️ Modifier</button>    
+                                <button class="delete-order" onclick="if(confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) window.location.href='{{ path('app_popup_product_delete', {'productId': product.id}) }}'"> 🗑️ Supprimer</button>
                             </td>
                             {% else %}
                                 <button class="remove-from-fav" data-id="{{ product.id }}" {% if not FavoriteService.checkFav(product.id) %} style="display: none;" {% endif %}><svg xmlns="http://www.w3.org/2000/svg" height="25" width="25" viewBox="0 0 512 512"><path fill="#ff0000" d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"/></svg></button>
@@ -416,9 +416,9 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    alert('Product added successfully!');
-                    closeAddProductModal();
                     location.reload();
+                    alert('Product added successfully!');
+
                 } else {
                     alert('Error: ' + data.message);
                 }
@@ -435,6 +435,67 @@
             document.getElementById('addFormModal').style.display = 'none';
             document.getElementById('addProductForm').reset();
         }
+        
+        document.querySelectorAll('.edit-product').forEach(button => {
+            button.addEventListener('click', function() {
+                const productId = this.getAttribute('data-id');
+                document.getElementById('editFormModal').style.display = 'flex';
+
+                // Get product data
+                fetch(`/user/me/edit-product/${productId}`, {
+                    method: 'GET'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const form = document.querySelector('#editFormModal form');
+                        form.querySelector('#add_product_title').value = data.product.title;
+                        form.querySelector('#add_product_description').value = data.product.description;
+                        form.querySelector('#add_product_price').value = data.product.price;
+                        form.querySelector('#add_product_image_url').value = data.product.imageUrl;
+                        form.querySelector('#add_product_categories').value = data.product.categories;
+                    } else {
+                        console.error('Error fetching product data:', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while fetching the product data.');
+                });
+                
+                document.getElementById('editFormSubmit').onclick = function(e) {
+                    e.preventDefault();
+                    const form = document.querySelector('#editFormModal form');
+                    const formData = new FormData(form);
+
+                    fetch(`/user/me/edit-product/${productId}`, {
+                        method: 'POST',
+                        body: formData
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            location.reload();
+                            alert('Product edited successfully!');
+
+                        } else {
+                            alert('Error: ' + data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('An error occurred while editing the product.');
+                    });
+                };
+            });
+        });
+
+        function closeEditProductModal() {
+            document.getElementById('editFormModal').style.display = 'none';
+            document.getElementById('editProductForm').reset();
+        }
+
+        document.getElementById('editFormCloseModal').addEventListener('click', closeEditProductModal);
 
         document.getElementById('messageCloseModal').addEventListener('click', function() {
             document.getElementById('messageModal').style.display = 'none';
@@ -454,37 +515,6 @@
 
         document.getElementById('addFormCloseModal').addEventListener('click', function() {
             document.getElementById('addFormModal').style.display = 'none';
-        });
-
-        document.querySelectorAll('.delete-order').forEach(button => {
-            button.addEventListener('click', function(e) {
-                e.preventDefault();
-                const productId = this.getAttribute('data-id');
-
-                if (confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) {
-                    fetch(`/user/me/delete-product/${productId}`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Requested-With': 'XMLHttpRequest'
-                        }
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            alert(data.message);
-                            // Supprimer l'élément du DOM ou recharger la page
-                            location.reload();
-                        } else {
-                            alert('Error: ' + data.message);
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        alert('An error occurred while deleting the product.');
-                    });
-                }
-            });
         });
     </script>
 {% endblock %}

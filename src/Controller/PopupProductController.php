@@ -89,17 +89,12 @@ class PopupProductController extends AbstractController
     }
 
     #[Route('/user/me/delete-product/{productId}', name: 'app_popup_product_delete')]
-    public function delete($productId): JsonResponse
+    public function delete($productId): Response
     {
         $product = $this->entityManagerInterface->getRepository(Product::class)->find($productId);
-
-        try {
-            $this->entityManagerInterface->remove($product);
-            $this->entityManagerInterface->flush();
-            return $this->json(['success' => true, 'message' => 'Product deleted successfully']);
-        } catch (\Exception $e) {
-            return $this->json(['success' => false, 'message' => $e->getMessage()], 500);
-        }
+        $this->entityManagerInterface->remove($product);
+        $this->entityManagerInterface->flush();
+        return $this->redirectToRoute('app_me');
     }
 
     #[Route('/user/me/billspdf', name: 'app_popup_product_billspdf')]
