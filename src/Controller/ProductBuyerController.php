@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ProductBuyerController extends AbstractController
 {
-    #[Route('/catalog', name: 'app_product_buyer')]
+    #[Route('/', name: 'app_product_buyer')]
     public function index(Request $request, ProductRepository $productRepository, FavoriteService $favoriteService, CategoryRepository $categoryRepository): Response
     {
 
