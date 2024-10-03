@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Product;
 use App\Entity\SecurityUser;
+use App\Repository\CategoryRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SecurityUserRepository;
 use App\Service\FavoriteService;
@@ -11,20 +12,28 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\Request;
 
 class ProductBuyerController extends AbstractController
 {
-    #[Route('/product/buyer', name: 'app_product_buyer')]
-    public function index(ProductRepository $productRepository, FavoriteService $favoriteService): Response
+    #[Route('/catalog', name: 'app_product_buyer')]
+    public function index(Request $request, ProductRepository $productRepository, FavoriteService $favoriteService, CategoryRepository $categoryRepository): Response
     {
-        $productList = $productRepository->findAll();
+        $categoryId = $request->query->get('category');
+        $searchTerm = $request->query->get('search');
+
+        $productList = $productRepository->findBySearch($categoryId, $searchTerm);
+        $categoryList = $categoryRepository->findAll();
+
         foreach ($productList as $product) {
             $favoriteService->updateFav($product);
         }
 
-        return $this->render('product_buyer/index.html.twig', [
+        return $this->render('catalog/index.html.twig', [
             'controller_name' => 'ProductBuyerController',
             'productList' => $productList,
+            'categoryList' => $categoryList,
         ]);
     }
+
 }
