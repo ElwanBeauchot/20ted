@@ -1,0 +1,72 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Notifications{% endblock %}
+
+{% block body %}
+    <style>
+        .notifications-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .notification-item {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+
+        .notification-item:hover {
+            background-color: #f0f0f0;
+        }
+
+        .notification-item strong {
+            color: #333;
+            font-size: 1.1em;
+        }
+
+        .notification-item p {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .notification-item .date {
+            font-size: 0.9em;
+            color: #999;
+        }
+
+        h1 {
+            font-size: 2em;
+            color: #444;
+            margin-bottom: 20px;
+        }
+
+        .empty-message {
+            color: #888;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+
+    <h1>Notifications</h1>
+
+    <ul class="notifications-list">
+        {% for message in messages %}
+            <li class="notification-item">
+                {% if message.seller.id != app.user.id %}
+                <p><strong> {{ message.seller.username }} - {{ message.product.title }}</strong></p>
+                {% else %}
+                    <h3><strong> {{ message.buyer.username }} - {{ message.product.title }}</strong></h3>
+                {% endif %}
+
+                <p><strong>Contenu :</strong> {{ message.text }}</p>
+                <p class="date"><strong>Date :</strong> {{ message.date|date('d-m-Y H:i') }}</p>
+            </li>
+        {% else %}
+            <li class="empty-message">Aucune notification à afficher.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
