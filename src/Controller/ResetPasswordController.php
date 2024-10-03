@@ -20,7 +20,12 @@ class ResetPasswordController extends AbstractController
     #[Route('/reset', name: 'app_reset_password')]
     public function reset(EntityManagerInterface $entityManager,Request $request, UserPasswordHasherInterface $passwordHasher, TranslatorInterface $translator, string $token = null): Response
     {
-        
+        //////////////////////////////////////////////
+        if($this->getUser() === null){
+            return $this->redirectToRoute('app_login');
+        }
+        //////////////////////////////////////////////  
+
         $user = $entityManager->getRepository(SecurityUser::class)->find(id: $this->getUser());
 
         // The token is valid; allow the user to change their password.

@@ -18,7 +18,6 @@ class FavoriteService
     public function updateFav($product): void
     {
         $em = $this->entityManager;
-        $user = $this->security->getUser();
         $producted = $em->getRepository(Product::class)->find($product->getId());
 
         $producted->setFav(count($producted->getFavorite()));

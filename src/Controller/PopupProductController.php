@@ -2,9 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Order;
 use App\Entity\Product;
 use App\Form\AddProductType;
 use Doctrine\ORM\EntityManagerInterface;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -90,5 +93,54 @@ class PopupProductController extends AbstractController
         $this->entityManagerInterface->flush();
 
         return $this->redirectToRoute('app_me');
+    }
+
+    #[Route('/user/me/billspdf', name: 'app_popup_product_billspdf')]
+    public function billspdf(): Response
+    {
+        
+         //////////////////security////////////////////
+        if($this->getUser() === null){
+            return $this->redirectToRoute('app_login');
+        }
+        //////////////////////////////////////////////
+
+        $myOrdersSeller = $this->entityManagerInterface->getRepository(Order::class)->findBy(['seller' => $this->getUser()]);
+        $myOrdersBuyer = $this->entityManagerInterface->getRepository(Order::class)->findBy(['buyer' => $this->getUser()]);
+
+        $pdfOptions = new Options();
+        $pdfOptions->set('defaultFont', 'Arial');
+        $pdfOptions->setIsRemoteEnabled(true);
+
+        $depense = 0;
+        $revenu = 0;
+        $total = 0;
+        foreach($myOrdersSeller as $order){
+            $revenu += $order->getProducts()->getPrice();
+        }
+        foreach($myOrdersBuyer as $order){
+            $depense += $order->getProducts()->getPrice();
+        }
+        $total += $revenu - $depense;
+
+        $dompdf = new Dompdf($pdfOptions);
+        $html = $this->renderView('popup_product/billspdf.html.twig', [
+            'myOrdersSeller' => $myOrdersSeller,
+            'myOrdersBuyer' => $myOrdersBuyer,
+            'depense' => $depense,
+            'revenu' => $revenu,
+            'total' => $total,
+        ]);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        $pdfContent = $dompdf->output();
+
+        $response = new Response($pdfContent);
+        $response->headers->set('Content-Type', 'application/pdf');
+        $response->headers->set('Content-Disposition', 'inline; filename="bills.pdf"');
+
+        return $response;
     }
 }
