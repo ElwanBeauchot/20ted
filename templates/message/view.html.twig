@@ -25,14 +25,14 @@
         }
 
         .message-bubble.right {
-            background-color: #d1c4e9; /* Couleur pour les messages de l'utilisateur */
-            margin-left: auto; /* Pousse à droite */
-            text-align: right; /* Aligne le texte à droite */
+            background-color: #d1c4e9;
+            margin-left: auto;
+            text-align: right;
         }
 
         .message-bubble.left {
-            background-color: #f0f4c3; /* Couleur pour les messages de l'interlocuteur */
-            text-align: left; /* Aligne le texte à gauche */
+            background-color: #f0f4c3;
+            text-align: left;
         }
 
         h1 {
@@ -71,9 +71,12 @@
                 left
             {% endif %}">
             <p class="message-info"> {{ message.sender.username }}</p>
+
             <p>{{ message.text }}</p>
-            <p class="message-info"> {{ message.date|date('Y-m-d H:i') }}</p>
+            <p class="message-info">Date : {{ message.date|date('Y-m-d H:i') }}</p>
         </div>
+    {% else %}
+        <p>Aucune notification à afficher.</p>
     {% endfor %}
 
     {{ form_start(form) }}
