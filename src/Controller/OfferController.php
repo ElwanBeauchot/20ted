@@ -17,6 +17,12 @@ class OfferController extends AbstractController
     #[Route('/submit-offer/{productId}', name: 'submit_offer', methods: ['POST'])]
     public function submitOffer(Request $request, ProductRepository $productRepository, EntityManagerInterface $em, OfferRepository $offerRepository, int $productId): JsonResponse
     {
+        //////////////////////////////////////////////
+        if($this->getUser() === null){
+            return $this->redirectToRoute('app_login');
+        }
+        //////////////////////////////////////////////
+        
         $data = json_decode($request->getContent(), true);
         $offerPrice = $data['offerPrice'];
 

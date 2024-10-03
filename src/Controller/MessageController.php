@@ -23,9 +23,11 @@ class MessageController extends AbstractController
     public function index(MessageRepository $messageRepository): Response
     {
         $user = $this->getUser();
-        if (!$user) {
+        //////////////////////////////////////////////
+        if($user === null){
             return $this->redirectToRoute('app_login');
         }
+        //////////////////////////////////////////////
 
         $messages = $messageRepository->findLastMessages($user);
 
@@ -46,14 +48,20 @@ class MessageController extends AbstractController
     #[Route('/messages/view/{productId}/{buyerId}/{sellerId}', name: 'view_message')]
     public function view(Request $request, MessageRepository $messageRepository, int $productId, int $buyerId, int $sellerId): Response
     {
-        $user = $this->getUser();
-        if (!$user) {
+        $buyer = $this->entityManager->getRepository(SecurityUser::class)->find($buyerId);
+        $seller = $this->entityManager->getRepository(SecurityUser::class)->find($sellerId);
+        
+        //////////////////////////////////////////////
+        if($this->getUser() === null){
             return $this->redirectToRoute('app_login');
+        }elseif($this->getUser() !== $buyer && $this->getUser() !== $seller){
+            return $this->redirectToRoute('app_messages');
         }
+        //////////////////////////////////////////////
+
 
         $messages = $messageRepository->showDiscussion($productId, $buyerId, $sellerId);
 
-        $buyer = $this->entityManager->getRepository(SecurityUser::class)->find($buyerId);
         $product = $this->entityManager->getRepository(Product::class)->find($productId);
 
         $message = new Message();
