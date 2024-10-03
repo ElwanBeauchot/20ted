@@ -49,7 +49,7 @@
     </style>
 
     <div class="container mt-4">
-        <h1 class="mb-4">{{user.username}}</h1>
+        <h1 class="mb-4">{{user.username}} | {{user.wallet|number_format(2, ',', ' ')}} €</h1>
         {% if bMe %}
         <a href="{{ path('app_popup_product') }}" id="popup">
             Ajouter un produit
