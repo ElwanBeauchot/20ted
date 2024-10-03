@@ -112,10 +112,24 @@ class PopupProductController extends AbstractController
         $pdfOptions->set('defaultFont', 'Arial');
         $pdfOptions->setIsRemoteEnabled(true);
 
+        $depense = 0;
+        $revenu = 0;
+        $total = 0;
+        foreach($myOrdersSeller as $order){
+            $revenu += $order->getProducts()->getPrice();
+        }
+        foreach($myOrdersBuyer as $order){
+            $depense += $order->getProducts()->getPrice();
+        }
+        $total += $revenu - $depense;
+
         $dompdf = new Dompdf($pdfOptions);
         $html = $this->renderView('popup_product/billspdf.html.twig', [
             'myOrdersSeller' => $myOrdersSeller,
             'myOrdersBuyer' => $myOrdersBuyer,
+            'depense' => $depense,
+            'revenu' => $revenu,
+            'total' => $total,
         ]);
         $dompdf->loadHtml($html);
         $dompdf->setPaper('A4', 'portrait');
