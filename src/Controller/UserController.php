@@ -4,9 +4,11 @@ namespace App\Controller;
 
 use App\Entity\Product;
 use App\Entity\SecurityUser;
+use App\Form\AddProductType;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -16,7 +18,7 @@ class UserController extends AbstractController
     {
     }
     #[Route('/user/me', name: 'app_me')]
-    public function me(CategoryRepository $categoryRepository): Response
+    public function me(CategoryRepository $categoryRepository, Request $request): Response
     {        
         //////////////////security////////////////////
         if($this->getUser() === null){
@@ -28,12 +30,21 @@ class UserController extends AbstractController
         $productList = $this->entityManagerInterface->getRepository(Product::class)->findBy(['users' => $this->getUser()]);
         $categoryList = $categoryRepository->findAll();
 
+        
+        $addForm = $this->createForm(AddProductType::class);
+        $addForm->handleRequest ($request );
+
+        $editForm = $this->createForm(AddProductType::class);
+        $editForm->handleRequest ($request );
+
         return $this->render('catalog/index.html.twig', [
             'productList' => $productList,
             'categoryList' => $categoryList,
             'bMe' => $bMe,
             'catalogUser' => $catalogUser,
             'user' => $this->getUser(),
+            'addForm' => $addForm->createView(),
+            'editForm' => $editForm->createView(),
         ]);
     }
 

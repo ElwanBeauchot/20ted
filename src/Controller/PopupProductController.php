@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
 use App\Entity\Order;
 use App\Entity\Product;
 use App\Form\AddProductType;
@@ -9,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -21,90 +23,88 @@ class PopupProductController extends AbstractController
         
     }
     #[Route('/user/me/add-product', name: 'app_popup_product')]
-    public function index(Request $request): Response
+    public function index(Request $request): JsonResponse
     {
-        //////////////////security////////////////////
-        if($this->getUser() === null){
-            return $this->redirectToRoute('app_login');
-        }
-        //////////////////////////////////////////////
-        
-        $new_product = new Product();
-        $form = $this->createForm(AddProductType::class, $new_product);
-        $form->handleRequest ($request );
+        $form = $this->createForm(AddProductType::class);
+        $form->handleRequest($request);
 
-        if ($form->isSubmitted () && $form->isValid()) {
+        if ($form->isSubmitted() && $form->isValid()) {
+            $new_product = $form->getData();
             $new_product->setUsers($this->getUser());
             $new_product->setFav(0);
-            $this->entityManagerInterface->persist($new_product);
-            $this->entityManagerInterface->flush();
-            return $this->redirectToRoute('app_me');
+            $new_product->setStatus(1);
+
+            try {
+                $this->entityManagerInterface->persist($new_product);
+                $this->entityManagerInterface->flush();
+                return $this->json(['success' => true]);
+            } catch (\Exception $e) {
+                return $this->json(['success' => false, 'message' => $e->getMessage()], 500);
+            }
         }
 
-      return $this->render('popup_product/index.html.twig', [
-         'form' => $form->createView(),
-      ]);
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $errors = [];
+            foreach ($form->getErrors(true) as $error) {
+                $errors[] = $error->getMessage();
+            }
+            return $this->json(['success' => false, 'message' => 'Form validation failed', 'errors' => $errors], 400);
+        }
+
+        return $this->json(['success' => false, 'message' => 'Invalid request'], 400);
     }
-    #[Route('/user/me/edit-product/{id}', name: 'app_popup_product_edit')]
-    public function edit(Request $request, $id): Response
+    #[Route('/user/me/edit-product/{productId}', name: 'app_popup_product_edit')]
+    public function edit(Request $request, $productId): JsonResponse
     {
-        $update_product = $this->entityManagerInterface->getRepository(Product::class)->find($id);
-
-        //////////////////security////////////////////
-        if($this->getUser() === null){
-            return $this->redirectToRoute('app_login');
-        }else if($update_product === null){
-            return $this->redirectToRoute('app_me');
-        }else if($this->getUser() !== $this->entityManagerInterface->getRepository(Product::class)->find($id)->getUsers()){
-            return $this->redirectToRoute('app_me');
-        }
-        //////////////////////////////////////////////
+        $update_product = $this->entityManagerInterface->getRepository(Product::class)->find($productId);
 
         $form = $this->createForm(AddProductType::class, $update_product);
-        $form->handleRequest ($request );
 
-
-        if ($form->isSubmitted () && $form->isValid()) {
-            $this->entityManagerInterface->persist($update_product);
-            $this->entityManagerInterface->flush();
-            return $this->redirectToRoute('app_me');
+        if ($request->isMethod('GET')) {
+            return $this->json([
+                'success' => true,
+                'product' => [
+                    'id' => $update_product->getId(),
+                    'title' => $update_product->getTitle(),
+                    'description' => $update_product->getDescription(),
+                    'price' => $update_product->getPrice(),
+                    'imageUrl' => $update_product->getImageUrl(),
+                    'categories' => $update_product->getCategories()->getId(),
+                ]
+            ]);
         }
 
-        return $this->render('popup_product/index.html.twig', [
-            'form' => $form->createView(),
-         ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            try {
+                $this->entityManagerInterface->flush();
+                return $this->json(['success' => true]);
+            } catch (\Exception $e) {
+                return $this->json(['success' => false, 'message' => $e->getMessage()], 500);
+            }
+        }
+
+        return $this->json(['success' => false, 'message' => 'Invalid request'], 400);
     }
-    #[Route('/user/me/delete-product/{id}', name: 'app_popup_product_delete')]
-    public function delete($id): Response
+
+    #[Route('/user/me/delete-product/{productId}', name: 'app_popup_product_delete')]
+    public function delete($productId): JsonResponse
     {
-        $update_product = $this->entityManagerInterface->getRepository(Product::class)->find($id);
+        $product = $this->entityManagerInterface->getRepository(Product::class)->find($productId);
 
-         //////////////////security////////////////////
-        if($this->getUser() === null){
-            return $this->redirectToRoute('app_login');
-        }else if($update_product === null){
-            return $this->redirectToRoute('app_me');
-        }else if($this->getUser() !== $this->entityManagerInterface->getRepository(Product::class)->find($id)->getUsers()){
-            return $this->redirectToRoute('app_me');
+        try {
+            $this->entityManagerInterface->remove($product);
+            $this->entityManagerInterface->flush();
+            return $this->json(['success' => true, 'message' => 'Product deleted successfully']);
+        } catch (\Exception $e) {
+            return $this->json(['success' => false, 'message' => $e->getMessage()], 500);
         }
-        //////////////////////////////////////////////
-
-        $this->entityManagerInterface->remove($update_product);
-        $this->entityManagerInterface->flush();
-
-        return $this->redirectToRoute('app_me');
     }
 
     #[Route('/user/me/billspdf', name: 'app_popup_product_billspdf')]
     public function billspdf(): Response
     {
-        
-         //////////////////security////////////////////
-        if($this->getUser() === null){
-            return $this->redirectToRoute('app_login');
-        }
-        //////////////////////////////////////////////
-
         $myOrdersSeller = $this->entityManagerInterface->getRepository(Order::class)->findBy(['seller' => $this->getUser()]);
         $myOrdersBuyer = $this->entityManagerInterface->getRepository(Order::class)->findBy(['buyer' => $this->getUser()]);
 
