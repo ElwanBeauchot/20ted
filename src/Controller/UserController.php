@@ -34,14 +34,18 @@ class UserController extends AbstractController
     #[Route('/user/{id}', name: 'app_user')]
     public function index($id): Response
     {
+        $user = $this->entityManagerInterface->getRepository(SecurityUser::class)->find($id);
         //////////////////security////////////////////
         if($this->getUser() === null){
             return $this->redirectToRoute('app_login');
+        }else if($this->getUser() === $user){
+            return $this->redirectToRoute('app_me');
+        }else if($user === null){
+            return $this->redirectToRoute('app_me');
         }
         //////////////////////////////////////////////
         
         $bMe = false;
-        $user = $this->entityManagerInterface->getRepository(SecurityUser::class)->find($id);
         $my_products = $this->entityManagerInterface->getRepository(Product::class)->findBy(['users' => $user]);
 
         return $this->render('user/index.html.twig', [
