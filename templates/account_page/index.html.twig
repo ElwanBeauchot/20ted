@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello AccountPageController!{% endblock %}
+
+{% block body %}
+
+<h2>Information utilisateur</h2>
+
+<ul>
+    {% for user in user %}
+        <li>{{ user.username|e }}</li>
+        <li>{{user.email}}</li>
+        <li>{{user.password}}</li>
+    {% endfor %}
+</ul>
+<br>
+
+    <h2>Modifier vos informations</h2>
+    {{ form_start(formUser) }}
+        {{ form_widget(formUser) }}
+        <button type="submit">Mettre à jour les informations</button>
+    {{ form_end(formUser) }}
+<br>   
+   <a href="/reset">change password</a>
+<br>
+
+<h2>Porte monnaie</h2>
+
+<h2>Gérer le porte-monnaie</h2>
+
+{% for message in app.flashes('error') %}
+    <div class="alert alert-danger">
+        {{ message }}
+    </div>
+{% endfor %}
+
+{{ form_start(walletForm) }}
+    {{ form_widget(walletForm) }}
+    <button type="submit">Valider</button>
+{{ form_end(walletForm) }}
+<br>
+
+{% for user in user %}
+        <li>{{user.wallet}} €</li>
+{% endfor %}
+
+<br>
+
+<h2>Log out</h2>
+
+<a href="{{ path('app_logout') }}">Logout</a>
+
+{% endblock %}

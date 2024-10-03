@@ -49,11 +49,13 @@
     </style>
 
     <div class="container mt-4">
-        <h1 class="mb-4">Liste des Produits</h1>
+        <h1 class="mb-4">{{user.username}} | {{user.wallet|number_format(2, '.', ' ')}} €</h1>
+        {% if bMe %}
         <a href="{{ path('app_popup_product') }}" id="popup">
             Ajouter un produit
         </a>
-
+        <a href="{{ path('app_account_page')}}">Modifier Profil</a>
+        {% endif %}
         <table class="table table-striped">
             <thead class="thead-dark">
                 <tr>
@@ -63,7 +65,9 @@
                     <th>Prix</th>
                     <th>Statut</th>
                     <th>Image</th>
+                    {% if bMe %}
                     <th>Actions</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -76,12 +80,13 @@
                 <tr>
                     <td>{{ product.id }}</td>
                     <td>{{ product.title }}</td>
-                    <td>{{ product.description|slice(0, 50) ~ '...' }}</td>
-                    <td>{{ product.price|number_format(2, ',', ' ') }} €</td>
+                    <td>{{ product.description}}</td>
+                    <td>{{ product.price|number_format(2, '.', ' ')}} €</td>
                     <td>{{ product.status }}</td>
                     <td>
                         <img src="{{ product.imageUrl }}" alt="{{ product.title }}" class="img-fluid">
                     </td>
+                    {% if bMe %}
                     <td>
                         <a href="{{ path('app_popup_product_edit', {'id': product.id}) }}" class="btn btn-sm btn-primary">
                             <i class="fas fa-edit"></i> Modifier
@@ -90,6 +95,7 @@
                             <i class="fas fa-trash"></i> Supprimer
                         </a>
                     </td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
                 {% endif %}
