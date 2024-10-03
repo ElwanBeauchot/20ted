@@ -1,0 +1,21 @@
+{# templates/message/index_acheteur.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}Messages en tant qu'Acheteur{% endblock %}
+
+{% block body %}
+    <h1>Messages en tant qu'Acheteur</h1>
+
+    <ul>
+        {% for message in messages %}
+            <li>
+                {{ message.buyer.username }}: {{ message.text }} <br>
+                {{ message.date|date('Y-m-d H:i') }}
+                <a href="{{ path('view_message', { 'id': message.id }) }}">Voir</a>
+            </li>
+        {% else %}
+            <li>Aucun message trouvé.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

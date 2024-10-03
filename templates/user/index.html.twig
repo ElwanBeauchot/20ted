@@ -1,0 +1,113 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des Produits{% endblock %}
+
+{% block body %}
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #333;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+        #popup {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none; 
+            border-radius: 5px;
+            margin-bottom: 20px;
+            transition: background-color 0.3s ease;
+        }
+        #popup:hover {
+            background-color: #0056b3;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .table th, .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .table thead th {
+            background-color: #343a40;
+            color: white;
+        }
+        .table tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        .table img {
+            max-width: 100px;
+            height: auto;
+        }
+    </style>
+
+    <div class="container mt-4">
+        <h1 class="mb-4">{{user.username}}</h1>
+        {% if bMe %}
+        <a href="{{ path('app_popup_product') }}" id="popup">
+            Ajouter un produit
+        </a>
+        {% endif %}
+        <table class="table table-striped">
+            <thead class="thead-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Titre</th>
+                    <th>Description</th>
+                    <th>Prix</th>
+                    <th>Statut</th>
+                    <th>Image</th>
+                    {% if bMe %}
+                    <th>Actions</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% if my_products is empty %}
+                <tr>
+                    <td>Aucun produit n'a été trouvé.</td>
+                </tr>
+                {% else %}
+                {% for product in my_products %}
+                <tr>
+                    <td>{{ product.id }}</td>
+                    <td>{{ product.title }}</td>
+                    <td>{{ product.description}}</td>
+                    <td>{{ product.price}} €</td>
+                    <td>{{ product.status }}</td>
+                    <td>
+                        <img src="{{ product.imageUrl }}" alt="{{ product.title }}" class="img-fluid">
+                    </td>
+                    {% if bMe %}
+                    <td>
+                        <a href="{{ path('app_popup_product_edit', {'id': product.id}) }}" class="btn btn-sm btn-primary">
+                            <i class="fas fa-edit"></i> Modifier
+                        </a>
+                        <a href="{{ path('app_popup_product_delete', {'id': product.id}) }}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce produit ?');">
+                            <i class="fas fa-trash"></i> Supprimer
+                        </a>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+{% block javascripts %}
+   <script>
+      $(function () {
+            $('#popup').on('click', function(){
+                $('#popup').modal('show');
+            });
+        });
+   </script>
+{% endblock %}

@@ -37,7 +37,7 @@ class SecurityUser implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $username = null;
 
     #[ORM\Column]
-    private ?float $wallet = null;
+    private ?float $wallet = 0;
 
     #[ORM\Column]
     private bool $isVerified = false;
