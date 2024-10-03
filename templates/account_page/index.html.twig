@@ -120,6 +120,15 @@
         {% for user in user %}
             <li><strong>Solde:</strong> {{ user.wallet }} €</li>
         {% endfor %}
+        
+        <h2>Vacances</h2>
+    <form action="{{ path('app_set_products_holiday') }}" method="POST">
+        <button type="submit">Activer le mode vacances</button>
+    </form>
+
+    <form action="{{ path('app_unset_products_holiday') }}" method="POST" style="margin-top: 10px;">
+        <button type="submit">Enlever le mode vacances</button>
+    </form>
 
         <h2>Log out</h2>
         <a href="{{ path('app_logout') }}">Déconnexion</a>
