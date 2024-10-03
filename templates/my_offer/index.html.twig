@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Offres{% endblock %}
+
+{% block body %}
+    <style>
+        .offer-container {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .offer-box {
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 20px;
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background-color: #f9f9f9;
+        }
+
+        .offer-details{
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        .offer-product-image {
+            width: 30%;
+        }
+        .offer-product-image img{
+            width: 100%;
+        }
+
+        .offer-product-info{
+            display: flex;
+            flex-direction: column;
+
+            width: 30%;
+        }
+
+        .offer-product-title{
+            font-size: 2em;
+            font-weight: bold;
+        }
+
+        .offer-buyer{
+            width: 30%;
+        }
+
+
+
+
+        .offer-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+
+        .btn {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .btn-reject {
+            background-color: #d9534f;
+        }
+
+        .btn-accept {
+            background-color: #5cb85c;
+        }
+    </style>
+
+    <div class="offer-container">
+        {% for offer in offerList %}
+            {% if not offer.status  %}
+                <div class="offer-box">
+                    <div class="offer-details">
+                        <div class="offer-product-image">
+                            <img src="{{ offer.products.imageUrl }}" alt="image du produit">
+                        </div>
+                        <div class="offer-product-info">
+                            <div class="offer-product-title">
+                                {{ offer.products.title }}
+                            </div>
+                            <div class="offer-prices">
+                                <del>{{ offer.products.price|number_format(2, '.', ' ') }} €</del>
+                                <p>{{ offer.price|number_format(2, '.', ' ') }} €</p>
+                            </div>
+                        </div>
+                        <div class="offer-buyer">
+                            Offre proposé par <a href="{{ path('app_user', {'id' : offer.products.users.id}) }}">{{ offer.products.users.username }}</a>
+                        </div>
+                    </div>
+                    <div class="offer-buttons">
+                        <button class="btn btn-reject">Refuser Offre</button>
+                        <button class="btn btn-accept">Accepter Offre</button>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endblock %}
