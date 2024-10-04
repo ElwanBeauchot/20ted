@@ -153,7 +153,7 @@ class MyOfferController extends AbstractController
                 $entityManager->persist($order);
                 $entityManager->flush();
             }else{
-                $this->addFlash('errorPayment', 'Insufficient funds');
+                $this->addFlash('errorPayment', 'Fond Insuffisant');
             }
             return $this->redirectToRoute('app_my_offer');
         }
