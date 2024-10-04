@@ -116,10 +116,10 @@ class PopupProductController extends AbstractController
         $revenu = 0;
         $total = 0;
         foreach($myOrdersSeller as $order){
-            $revenu += $order->getProducts()->getPrice();
+            $revenu += $order->getAmount();
         }
         foreach($myOrdersBuyer as $order){
-            $depense += $order->getProducts()->getPrice();
+            $depense += $order->getAmount();
         }
         $total += $revenu - $depense;
 
