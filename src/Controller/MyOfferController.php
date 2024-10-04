@@ -70,6 +70,7 @@ class MyOfferController extends AbstractController
             foreach ($notif as $notification) {
                 $entityManager->remove($notification);
             }
+            $offer->getProducts()->setStatus(1);
             $entityManager->remove($offer);
             $entityManager->flush();
 
@@ -120,8 +121,11 @@ class MyOfferController extends AbstractController
         }
         //////////////////////////////////////////////
 
+
         // CSRF token sert a supprimer securisé
         if ($this->isCsrfTokenValid('delete-order-' . $order->getId(), $request->request->get('_token'))) {
+
+            $order->getProducts()->setStatus(1);
             $entityManager->remove($order);
             $entityManager->flush();
 
@@ -153,7 +157,7 @@ class MyOfferController extends AbstractController
                 $entityManager->persist($order);
                 $entityManager->flush();
             }else{
-                $this->addFlash('errorPayment', 'Insufficient funds');
+                $this->addFlash('errorPayment', 'Fond Insuffisant');
             }
             return $this->redirectToRoute('app_my_offer');
         }

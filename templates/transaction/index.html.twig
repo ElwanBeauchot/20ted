@@ -119,6 +119,7 @@
 
         .alert {
             color: red;
+            font-size: 20px;
         }
 
         h1 {
@@ -127,8 +128,25 @@
             margin-bottom: 30px;
             font-size: 2em;
         }
+        .download {
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .download:hover {
+            color: #ff0000;
+        }
     </style>
 
+
+    <button class="download" onclick="window.location.href='{{ path('app_popup_product_billspdf') }}'">Télécharger commandes</button>
     <h1>Mes Offres</h1>
     <div class="offer-container">
         {% for offer in offerList %}
@@ -186,11 +204,6 @@
                     </div>
                     <div class="offer-buyer">
                         <p>Commandé à <a href="{{ path('app_user', {'id' : order.products.users.id}) }}">{{ order.products.users.username }}</a></p>
-                        {% for message in app.flashes('errorPayment') %}
-                            <div class="alert alert-danger">
-                                {{ message }}
-                            </div>
-                        {% endfor %}
                     </div>
                 </div>
                 <div class="offer-buttons">
@@ -207,6 +220,11 @@
                         Commande effectuée
                     {% endif %}
                 </div>
+            </div>
+        {% endfor %}
+        {% for message in app.flashes('errorPayment') %}
+            <div class="alert alert-danger">
+                {{ message }}
             </div>
         {% endfor %}
     </div>

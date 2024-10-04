@@ -30,7 +30,7 @@
                     <td>N°{{ order.id }}</td>
                     <td>{{ order.buyer.email }}</td>
                     <td>{{ order.products.title }} | {{ order.products.description }} | {{ order.products.categories.name }}</td>
-                    <td>{{ order.products.price }} €</td>
+                    <td>{{ order.amount|number_format(2, '.', ' ')}} €</td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -52,7 +52,7 @@
                     <td>N°{{ order.id }}</td>
                     <td>{{ order.seller.email }}</td>
                     <td>{{ order.products.title }} | {{ order.products.description }} | {{ order.products.categories.name }}</td>
-                    <td>{{ order.products.price }} €</td>
+                    <td>{{ order.amount|number_format(2, '.', ' ')}} €</td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -70,9 +70,9 @@
         </thead>
         <tbody>
             <tr>
-                <td>- {{ depense }} €</td>
-                <td>+ {{ revenu }} €</td>
-                <td>{% if total > 0 %}+ {% endif %}{{ total }} €</td>
+                <td>- {{ depense|number_format(2, '.', ' ')}} €</td>
+                <td>+ {{ revenu|number_format(2, '.', ' ')}} €</td>
+                <td>{% if total > 0 %}+ {% endif %}{{ total|number_format(2, '.', ' ') }}  €</td>
             </tr>
         </tbody>
     </table>
