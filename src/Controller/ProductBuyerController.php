@@ -16,6 +16,12 @@ class ProductBuyerController extends AbstractController
     public function index(Request $request, ProductRepository $productRepository, FavoriteService $favoriteService, CategoryRepository $categoryRepository): Response
     {
 
+        //////////////////security////////////////////
+        if($this->getUser() === null){
+            return $this->redirectToRoute('app_login');
+        }
+        //////////////////////////////////////////////
+
         $productList = $productRepository->findAll();
         $categoryList = $categoryRepository->findAll();
         $updatedProductList = [];

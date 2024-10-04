@@ -23,6 +23,13 @@ class MyOfferController extends AbstractController
     #[Route('/transaction', name: 'app_my_offer')]
     public function index(OfferRepository $offerRepository, Security $security, OrderRepository $orderRepository): Response
     {
+
+        //////////////////security////////////////////
+        if($this->getUser() === null){
+            return $this->redirectToRoute('app_login');
+        }
+        //////////////////////////////////////////////
+
         $offerList = $offerRepository->findAll();
         $orderList = $orderRepository->findAll();
 
@@ -49,6 +56,13 @@ class MyOfferController extends AbstractController
     #[Route('/my-offer/delete/{id}', name: 'app_my_offer_delete', methods: ['POST'])]
     public function delete(Offer $offer, EntityManagerInterface $entityManager, Request $request): Response
     {
+
+        //////////////////security////////////////////
+        if($this->getUser() === null){
+            return $this->redirectToRoute('app_login');
+        }
+        //////////////////////////////////////////////
+
         // CSRF token sert a supprimer securisé
         if ($this->isCsrfTokenValid('delete-offer-' . $offer->getId(), $request->request->get('_token'))) {
 
@@ -67,6 +81,13 @@ class MyOfferController extends AbstractController
     #[Route('/my-offer/confirm/{offer}', name: 'app_my_offer_confirm', methods: ['POST'])]
     public function confirm(EntityManagerInterface $entityManager, Request $request, ProductRepository $productRepository, Offer $offer, NotifService $notifService): Response
     {
+
+        //////////////////security////////////////////
+        if($this->getUser() === null){
+            return $this->redirectToRoute('app_login');
+        }
+        //////////////////////////////////////////////
+
         $product = $offer->getProducts();
 
         $order = new Order();
@@ -93,6 +114,11 @@ class MyOfferController extends AbstractController
     public function deleteOrder(Order $order, EntityManagerInterface $entityManager, Request $request): Response
     {
 
+        //////////////////security////////////////////
+        if($this->getUser() === null){
+            return $this->redirectToRoute('app_login');
+        }
+        //////////////////////////////////////////////
 
         // CSRF token sert a supprimer securisé
         if ($this->isCsrfTokenValid('delete-order-' . $order->getId(), $request->request->get('_token'))) {
@@ -107,6 +133,13 @@ class MyOfferController extends AbstractController
     #[Route('/my-order/confirm/{order}', name: 'app_my_order_confirm', methods: ['POST'])]
     public function confirmOrder(Order $order, EntityManagerInterface $entityManager, Request $request, SecurityUserRepository $securityUserRepository): Response
     {
+
+        //////////////////security////////////////////
+        if($this->getUser() === null){
+            return $this->redirectToRoute('app_login');
+        }
+        //////////////////////////////////////////////
+
         $user = $securityUserRepository->find($this->getUser());
 
         // CSRF token sert a supprimer securisé

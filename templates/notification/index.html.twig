@@ -4,6 +4,29 @@
 
 {% block body %}
     <style>
+        body {
+            background: #E8E0D2;
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .notifications-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 1px 10px rgba(189, 110, 122, 0.5);
+        }
+
+        h1 {
+            font-size: 24px;
+            color: #BD6E7A;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
         .notifications-list {
             list-style-type: none;
             padding: 0;
@@ -38,35 +61,32 @@
             color: #999;
         }
 
-        h1 {
-            font-size: 2em;
-            color: #444;
-            margin-bottom: 20px;
-        }
-
         .empty-message {
             color: #888;
             text-align: center;
             margin-top: 20px;
+            font-style: italic;
         }
     </style>
 
-    <h1>Notifications</h1>
+    <div class="notifications-container">
+        <h1>Notifications</h1>
 
-    <ul class="notifications-list">
-        {% for message in messages %}
-            <li class="notification-item">
-                {% if message.seller.id != app.user.id %}
-                <p><strong> {{ message.seller.username }} - {{ message.product.title }}</strong></p>
-                {% else %}
-                    <h3><strong> {{ message.buyer.username }} - {{ message.product.title }}</strong></h3>
-                {% endif %}
+        <ul class="notifications-list">
+            {% for message in messages %}
+                <li class="notification-item">
+                    {% if message.seller.id != app.user.id %}
+                        <p><strong>{{ message.seller.username }} - {{ message.product.title }}</strong></p>
+                    {% else %}
+                        <h3><strong>{{ message.buyer.username }} - {{ message.product.title }}</strong></h3>
+                    {% endif %}
 
-                <p><strong>Contenu :</strong> {{ message.text }}</p>
-                <p class="date"><strong>Date :</strong> {{ message.date|date('d-m-Y H:i') }}</p>
-            </li>
-        {% else %}
-            <li class="empty-message">Aucune notification à afficher.</li>
-        {% endfor %}
-    </ul>
+                    <p><strong>Contenu :</strong> {{ message.text }}</p>
+                    <p class="date"><strong>Date :</strong> {{ message.date|date('d-m-Y H:i') }}</p>
+                </li>
+            {% else %}
+                <li class="empty-message">Aucune notification à afficher.</li>
+            {% endfor %}
+        </ul>
+    </div>
 {% endblock %}

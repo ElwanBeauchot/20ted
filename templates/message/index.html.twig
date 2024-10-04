@@ -5,23 +5,39 @@
         body {
             background: #E8E0D2; /* Couleur de fond */
             font-family: 'Montserrat', sans-serif;
-            margin: 0; /* Supprime les marges par défaut */
-            padding: 0; /* Supprime le remplissage par défaut */
+            margin: 0;
+            padding: 0;
+        }
+
+        .message-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 1px 10px rgba(189, 110, 122, 0.5);
         }
 
         ul {
             list-style-type: none;
             padding: 0;
         }
+
         .message-bubble {
             background-color: #cfe3ff; /* Couleur de la bulle de message */
             padding: 15px;
-            margin-bottom: 20px; /* Espace entre les messages */
+            margin-bottom: 20px;
             border-radius: 15px;
             max-width: 80%;
             position: relative;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
         }
+
+        .message-bubble:hover {
+            background-color: #b8d1ff;
+        }
+
         .message-bubble::after {
             content: "";
             position: absolute;
@@ -31,43 +47,58 @@
             border-style: solid;
             border-color: transparent #cfe3ff transparent transparent; /* Couleur de la bulle */
         }
+
         h3 {
             margin: 0 0 10px 0;
             font-size: 1.2em;
             color: #333;
         }
+
         p {
             margin: 5px 0;
             color: #666;
         }
+
         .message-date {
             font-size: 0.8em;
             color: #999;
         }
+
         .access_message {
             display: inline-block;
             padding: 8px 15px;
-            background-color: #007bff; /* Couleur du bouton */
+            background-color: #BD6E7A; /* Couleur du bouton */
             color: white;
             text-decoration: none;
             border-radius: 5px;
-            margin-top: 10px; /* Espace entre le lien et le message */
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
         }
+
         .access_message:hover {
-            background-color: #0056b3; /* Couleur au survol */
+            background-color: #9f5560;
+        }
+
+        .empty-message {
+            color: #888;
+            text-align: center;
+            margin-top: 20px;
+            font-style: italic;
         }
     </style>
 
-    <ul>
-        {% for message in messages %}
-            <div class="message-bubble">
-                <h3>{{ message.interlocuteur.username }} - {{ message.products.title }}</h3>
-                <p>{{ message.text }}</p>
-                <p class="message-date"><em>{{ message.date|date('Y-m-d H:i') }}</em></p>
-                <a class="access_message" href="{{ path('view_message', { 'productId': message.products.id, 'buyerId': message.buyer.id, 'sellerId': message.products.users.id }) }}">Voir la discussion</a>
-            </div>
-        {% else %}
-            <p>Aucun message trouvé.</p>
-        {% endfor %}
-    </ul>
+    <div class="message-container">
+        <ul>
+            {% for message in messages %}
+                <div class="message-bubble">
+                    <h3>{{ message.interlocuteur.username }} - {{ message.products.title }}</h3>
+                    <p>{{ message.text }}</p>
+                    <p class="message-date"><em>{{ message.date|date('Y-m-d H:i') }}</em></p>
+                    <a class="access_message" href="{{ path('view_message', { 'productId': message.products.id, 'buyerId': message.buyer.id, 'sellerId': message.products.users.id }) }}">Voir la discussion</a>
+                </div>
+            {% else %}
+                <p class="empty-message">Aucun message trouvé.</p>
+            {% endfor %}
+        </ul>
+    </div>
 {% endblock %}
