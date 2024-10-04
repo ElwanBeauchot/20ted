@@ -35,6 +35,7 @@ class Notification
     #[ORM\ManyToOne(inversedBy: 'notificationOffer')]
     private ?Offer $offer = null;
 
+
     #[ORM\Column]
     private ?int $sender = null;
     public function __construct()

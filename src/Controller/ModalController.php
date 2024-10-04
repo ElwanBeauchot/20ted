@@ -6,6 +6,7 @@ use App\Entity\Message;
 use App\Entity\Offer;
 use App\Repository\OfferRepository;
 use App\Repository\ProductRepository;
+use App\Service\NotifService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +17,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 class ModalController extends AbstractController
 {
     #[Route('/submit-offer/{productId}', name: 'submit_offer', methods: ['POST'])]
-    public function submitOffer(Request $request, ProductRepository $productRepository, EntityManagerInterface $em, OfferRepository $offerRepository, int $productId): JsonResponse
+    public function submitOffer(NotifService $notifService, Request $request, ProductRepository $productRepository, EntityManagerInterface $em, OfferRepository $offerRepository, int $productId): JsonResponse
     {
         //////////////////////////////////////////////
         if($this->getUser() === null){
@@ -41,6 +42,8 @@ class ModalController extends AbstractController
 
         $em->persist($offer);
         $em->flush();
+
+        $notifService->notifOffer($offer);
 
         return new JsonResponse(['success' => true]);
     }

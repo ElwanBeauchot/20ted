@@ -11,7 +11,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 
 class FavoriteService
 {
-    public function __construct (private LoggerInterface $logger, private readonly EntityManagerInterface $entityManager, private Security $security, private ProductRepository $productRepository)
+    public function __construct (private LoggerInterface $logger, private readonly EntityManagerInterface $entityManager, private Security $security, private ProductRepository $productRepository, private NotifService $notifService)
     {
     }
 
@@ -42,6 +42,8 @@ class FavoriteService
         $em->persist($product);
         $em->flush();
         $this->updateFav($product);
+
+        $this->notifService->notifFav($product);
 
         return true;
     }

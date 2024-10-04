@@ -107,7 +107,7 @@
                         </div>
                     </div>
                     <div class="offer-buttons">
-                        {% if not order.status %}
+                        {% if not offer.status %}
                         <form action="{{ path('app_my_offer_delete', {'id': offer.id}) }}" method="post" style="display:inline-block;">
                             <input type="hidden" name="_token" value="{{ csrf_token('delete-offer-' ~ offer.id) }}">
                             <button class="btn btn-reject" type="submit">Refuser Offre</button>

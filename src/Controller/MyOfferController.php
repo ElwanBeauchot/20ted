@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Notification;
 use App\Entity\Offer;
 use App\Entity\Order;
 use App\Entity\Product;
@@ -9,6 +10,7 @@ use App\Repository\OfferRepository;
 use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
 use App\Repository\SecurityUserRepository;
+use App\Service\NotifService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -49,6 +51,11 @@ class MyOfferController extends AbstractController
     {
         // CSRF token sert a supprimer securisé
         if ($this->isCsrfTokenValid('delete-offer-' . $offer->getId(), $request->request->get('_token'))) {
+
+            $notif = $entityManager->getRepository(Notification::class)->findBy(['offer' => $offer->getId()]);
+            foreach ($notif as $notification) {
+                $entityManager->remove($notification);
+            }
             $entityManager->remove($offer);
             $entityManager->flush();
 
@@ -58,7 +65,7 @@ class MyOfferController extends AbstractController
     }
 
     #[Route('/my-offer/confirm/{offer}', name: 'app_my_offer_confirm', methods: ['POST'])]
-    public function confirm(EntityManagerInterface $entityManager, Request $request, ProductRepository $productRepository, Offer $offer): Response
+    public function confirm(EntityManagerInterface $entityManager, Request $request, ProductRepository $productRepository, Offer $offer, NotifService $notifService): Response
     {
         $product = $offer->getProducts();
 
@@ -68,12 +75,15 @@ class MyOfferController extends AbstractController
         $order->setSeller($this->getUser());
         $order->setAmount($offer->getPrice());
         $order->setStatus(0); // status 0 = en attente
-        $offer->setStatus(0);
-        $product->setStatus(0);
+        $offer->setStatus(1); //status 1 = offre acceptée
+        $product->setStatus(0); //status 0 = produit vendu
+
         $entityManager->persist($offer);
         $entityManager->persist($order);
         $entityManager->persist($product);
         $entityManager->flush();
+
+        $notifService->notifOrder($order);
 
         return $this->redirectToRoute('app_my_offer');
 
@@ -82,6 +92,8 @@ class MyOfferController extends AbstractController
     #[Route('/my-order/delete/{id}', name: 'app_my_order_delete', methods: ['POST'])]
     public function deleteOrder(Order $order, EntityManagerInterface $entityManager, Request $request): Response
     {
+
+
         // CSRF token sert a supprimer securisé
         if ($this->isCsrfTokenValid('delete-order-' . $order->getId(), $request->request->get('_token'))) {
             $entityManager->remove($order);
@@ -103,6 +115,7 @@ class MyOfferController extends AbstractController
             if ($user->getWallet() >= $order->getAmount()) {
                 $order->setStatus(1);
                 $user->setWallet($user->getWallet() - $order->getAmount());
+                $order->getSeller()->setWallet($order->getSeller()->getWallet() + $order->getAmount());
                 $entityManager->persist($user);
                 $entityManager->persist($order);
                 $entityManager->flush();
