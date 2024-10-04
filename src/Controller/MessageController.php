@@ -8,6 +8,7 @@ use App\Entity\Product;
 use App\Entity\SecurityUser;
 use App\Form\MessageType;
 use App\Repository\MessageRepository;
+use App\Service\MessageService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -47,7 +48,7 @@ class MessageController extends AbstractController
     }
 
     #[Route('/messages/view/{productId}/{buyerId}/{sellerId}', name: 'view_message')]
-    public function view(Request $request, MessageRepository $messageRepository, int $productId, int $buyerId, int $sellerId): Response
+    public function view(Request $request,MessageService $messageService, MessageRepository $messageRepository, int $productId, int $buyerId, int $sellerId): Response
     {
         $buyer = $this->entityManager->getRepository(SecurityUser::class)->find($buyerId);
         $seller = $this->entityManager->getRepository(SecurityUser::class)->find($sellerId);
@@ -61,7 +62,7 @@ class MessageController extends AbstractController
         //////////////////////////////////////////////
 
 
-        $messages = $messageRepository->showDiscussion($productId, $buyerId, $sellerId);
+        $messages = $messageService->showDiscussion($productId, $buyerId, $sellerId);
 
         $product = $this->entityManager->getRepository(Product::class)->find($productId);
         $seller = $this->entityManager->getRepository(SecurityUser::class)->find($sellerId);
