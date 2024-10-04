@@ -4,6 +4,15 @@
 
 {% block body %}
     <style>
+        .message-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 1px 10px rgba(189, 110, 122, 0.5);
+        }
+
         .message-bubble {
             background-color: #f0f4c3;
             padding: 15px;
@@ -12,16 +21,7 @@
             max-width: 80%;
             position: relative;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .message-bubble::after {
-            content: "";
-            position: absolute;
-            top: 15px;
-            left: -10px;
-            border-width: 10px;
-            border-style: solid;
-            border-color: transparent #f0f4c3 transparent transparent;
+            transition: background-color 0.3s ease;
         }
 
         .message-bubble.right {
@@ -35,10 +35,35 @@
             text-align: left;
         }
 
+        .message-bubble:hover {
+            background-color: #e7efb8;
+        }
+
+        .message-bubble.right:hover {
+            background-color: #c8b3e6;
+        }
+
+        .message-bubble::after {
+            content: "";
+            position: absolute;
+            top: 15px;
+            left: -10px;
+            border-width: 10px;
+            border-style: solid;
+            border-color: transparent #f0f4c3 transparent transparent;
+        }
+
+        .message-bubble.right::after {
+            left: auto;
+            right: -10px;
+            border-color: transparent transparent transparent #d1c4e9;
+        }
+
         h1 {
             font-size: 1.8em;
-            color: #333;
+            color: #444;
             margin-bottom: 20px;
+            text-align: center;
         }
 
         .message-info {
@@ -49,40 +74,53 @@
 
         a {
             display: inline-block;
-            padding: 8px 15px;
-            background-color: #007bff;
+            padding: 10px 20px;
+            background-color: #BD6E7A;
             color: white;
             text-decoration: none;
             border-radius: 5px;
             margin-top: 20px;
+            transition: background-color 0.3s ease;
         }
 
         a:hover {
-            background-color: #0056b3;
+            background-color: #9f5560;
+        }
+
+        .btn-primary {
+            background-color: #BD6E7A;
+            border-color: #BD6E7A;
+        }
+
+        .btn-primary:hover {
+            background-color: #9f5560;
+            border-color: #9f5560;
         }
     </style>
 
-    <h1>Détails du Message</h1>
-    {% for message in messages %}
-        <div class="message-bubble
-            {% if message.sender.id == app.user.id %}
-                right
-            {% else %}
-                left
-            {% endif %}">
-            <p class="message-info"> {{ message.sender.username }}</p>
+    <div class="message-container">
+        <h1>Détails du Message</h1>
+        
+        {% for message in messages %}
+            <div class="message-bubble
+                {% if message.sender.id == app.user.id %}
+                    right
+                {% else %}
+                    left
+                {% endif %}">
+                <p class="message-info">{{ message.sender.username }}</p>
+                <p>{{ message.text }}</p>
+                <p class="message-info">Date : {{ message.date|date('Y-m-d H:i') }}</p>
+            </div>
+        {% else %}
+            <p>Aucune notification à afficher.</p>
+        {% endfor %}
 
-            <p>{{ message.text }}</p>
-            <p class="message-info">Date : {{ message.date|date('Y-m-d H:i') }}</p>
-        </div>
-    {% else %}
-        <p>Aucune notification à afficher.</p>
-    {% endfor %}
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button type="submit" class="btn btn-primary">Ajouter</button>
+        {{ form_end(form) }}
 
-    {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button type="submit" class="btn btn-primary">Ajouter</button>
-    {{ form_end(form) }}
-
-    <a href="{{ path('app_messages') }}">Retour à la liste des messages</a>
+        <a href="{{ path('app_messages') }}">Retour à la liste des messages</a>
+    </div>
 {% endblock %}
