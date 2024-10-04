@@ -94,28 +94,27 @@
 
         <h1>Register</h1>
 
-        <!-- Gestion des erreurs si nécessaires -->
-        {% for flash_error in app.flashes('verify_email_error') %}
-            <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-        {% endfor %}
+        {{ form_errors(registerForm) }}
 
-        <form method="post">
-            <label for="username">Username</label>
-            <input type="text" name="username" id="username" class="form-control" required autofocus>
+        {{ form_start(registerForm) }}
+        {{ form_row(registerForm.username, {
+            label: 'Username'
+        }) }}
+        {{ form_row(registerForm.email) }}
+        {{ form_row(registerForm.plainPassword, {
+            label: 'Password'
+        }) }}
+        {{ form_row(registerForm.agreeTerms, {
+            label: 'I agree to the terms and conditions'
+        }) }}
 
-            <label for="email">Email</label>
-            <input type="email" name="email" id="email" class="form-control" required>
-
-            <label for="password">Password</label>
-            <input type="password" name="password" id="password" class="form-control" required>
-
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
-
-            <button class="btn btn-lg btn-primary" type="submit">Register</button>
-        </form>
-
+        <button type="submit" class="btn">Register</button>
         <div class="link-container">
             <a href="{{ path('app_login') }}">Already have an account? Login</a>
         </div>
+        {{ form_end(registerForm) }}
+    </div>
+
+
     </div>
 {% endblock %}
