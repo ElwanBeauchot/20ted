@@ -359,6 +359,8 @@
                 }
             });
         });
+    </script>
+    <script>
     {#-------------------------------------CATEGORY-------------------------------------#}
 
         document.getElementById('category-select').addEventListener('change', function() {
@@ -375,7 +377,8 @@
                 }
             });
         });
-
+    </script>
+    <script>
     {#-------------------------------------FAVORITE-------------------------------------#}
 
         document.querySelectorAll('.add-to-fav').forEach(button => {
@@ -429,7 +432,8 @@
                     });
             });
         });
-
+    </script>
+    <script>
     {#-------------------------------------OFFER-------------------------------------#}
 
         document.querySelectorAll('.make-offer').forEach(button => {
@@ -473,7 +477,8 @@
         document.getElementById('offerPrice').addEventListener('input', function() {
             document.getElementById('priceOutput').textContent = this.value;
         });
-
+    </script>
+    <script>
     {#-------------------------------------MESSAGE-------------------------------------#}
 
         document.querySelectorAll('.send-message').forEach(button => {
@@ -508,8 +513,8 @@
         document.getElementById('messageCloseModal').addEventListener('click', function() {
             document.getElementById('messageModal').style.display = 'none';
         });
-
-
+        </script>
+        <script>
 
         let showingFavorites = false;
 
@@ -556,15 +561,19 @@
                 }
             });
 
-            // Remplacez le contenu de l'élément wrapper avec les produits triés
-            const wrapper = document.querySelector('.wrapper');
-            wrapper.innerHTML = ''; // Effacez le contenu actuel
 
-            // Ajoutez les produits triés à l'élément wrapper
+            const wrapper = document.querySelector('.wrapper');
+            wrapper.innerHTML = '';
+
             cardsArray.forEach(card => {
                 wrapper.appendChild(card);
             });
-            {#-------------------------------------ADD_PRODUCT-------------------------------------#}
+
+        });
+
+        </script>
+        <script>
+        {#-------------------------------------ADD_PRODUCT-------------------------------------#}
 
         document.getElementById('addForm').addEventListener('click', function() {
             document.getElementById('addFormModal').style.display = 'flex';
@@ -663,8 +672,5 @@
         }
 
         document.getElementById('editFormCloseModal').addEventListener('click', closeEditProductModal);
-        });
-
-
     </script>
 {% endblock %}
