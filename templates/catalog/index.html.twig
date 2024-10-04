@@ -509,7 +509,62 @@
             document.getElementById('messageModal').style.display = 'none';
         });
 
-    {#-------------------------------------ADD_PRODUCT-------------------------------------#}
+
+
+        let showingFavorites = false;
+
+        document.getElementById('show-favorites').addEventListener('click', function() {
+            showingFavorites = !showingFavorites; // Toggle the favorite view
+            const cards = document.querySelectorAll('.single-card');
+
+            cards.forEach(card => {
+                const productId = card.querySelector('.add-to-fav').getAttribute('data-id');
+                const isFavorite = card.querySelector('.remove-from-fav').style.display !== 'none'; // Check if the favorite button is hidden
+
+                if (showingFavorites) {
+                    if (isFavorite) {
+                        card.style.display = "block"; // Show favorite cards
+                    } else {
+                        card.style.display = "none"; // Hide non-favorite cards
+                    }
+                } else {
+                    card.style.display = "block"; // Show all cards
+                }
+            });
+        });
+        document.getElementById('sort-select').addEventListener('change', function() {
+            const selectedOption = this.value;
+            const cardsArray = Array.from(document.querySelectorAll('.single-card'));
+
+            cardsArray.sort((a, b) => {
+                const priceA = parseFloat(a.querySelector('.price').textContent.replace(',', '.'));
+                const priceB = parseFloat(b.querySelector('.price').textContent.replace(',', '.'));
+                const favA = parseInt(a.querySelector('span').textContent.replace('❤️', '').trim());
+                const favB = parseInt(b.querySelector('span').textContent.replace('❤️', '').trim());
+
+                switch (selectedOption) {
+                    case 'price-ascended':
+                        return priceA - priceB; // Prix croissant
+                    case 'price-descended':
+                        return priceB - priceA; // Prix décroissant
+                    case 'popularity-ascended':
+                        return favA - favB; // Popularité croissante
+                    case 'popularity-descended':
+                        return favB - favA; // Popularité décroissante
+                    default:
+                        return 0; // Pertinence (aucun tri)
+                }
+            });
+
+            // Remplacez le contenu de l'élément wrapper avec les produits triés
+            const wrapper = document.querySelector('.wrapper');
+            wrapper.innerHTML = ''; // Effacez le contenu actuel
+
+            // Ajoutez les produits triés à l'élément wrapper
+            cardsArray.forEach(card => {
+                wrapper.appendChild(card);
+            });
+            {#-------------------------------------ADD_PRODUCT-------------------------------------#}
 
         document.getElementById('addForm').addEventListener('click', function() {
             document.getElementById('addFormModal').style.display = 'flex';
@@ -608,60 +663,6 @@
         }
 
         document.getElementById('editFormCloseModal').addEventListener('click', closeEditProductModal);
-
-        let showingFavorites = false;
-
-        document.getElementById('show-favorites').addEventListener('click', function() {
-            showingFavorites = !showingFavorites; // Toggle the favorite view
-            const cards = document.querySelectorAll('.single-card');
-
-            cards.forEach(card => {
-                const productId = card.querySelector('.add-to-fav').getAttribute('data-id');
-                const isFavorite = card.querySelector('.remove-from-fav').style.display !== 'none'; // Check if the favorite button is hidden
-
-                if (showingFavorites) {
-                    if (isFavorite) {
-                        card.style.display = "block"; // Show favorite cards
-                    } else {
-                        card.style.display = "none"; // Hide non-favorite cards
-                    }
-                } else {
-                    card.style.display = "block"; // Show all cards
-                }
-            });
-        });
-        document.getElementById('sort-select').addEventListener('change', function() {
-            const selectedOption = this.value;
-            const cardsArray = Array.from(document.querySelectorAll('.single-card'));
-
-            cardsArray.sort((a, b) => {
-                const priceA = parseFloat(a.querySelector('.price').textContent.replace(',', '.'));
-                const priceB = parseFloat(b.querySelector('.price').textContent.replace(',', '.'));
-                const favA = parseInt(a.querySelector('span').textContent.replace('❤️', '').trim());
-                const favB = parseInt(b.querySelector('span').textContent.replace('❤️', '').trim());
-
-                switch (selectedOption) {
-                    case 'price-ascended':
-                        return priceA - priceB; // Prix croissant
-                    case 'price-descended':
-                        return priceB - priceA; // Prix décroissant
-                    case 'popularity-ascended':
-                        return favA - favB; // Popularité croissante
-                    case 'popularity-descended':
-                        return favB - favA; // Popularité décroissante
-                    default:
-                        return 0; // Pertinence (aucun tri)
-                }
-            });
-
-            // Remplacez le contenu de l'élément wrapper avec les produits triés
-            const wrapper = document.querySelector('.wrapper');
-            wrapper.innerHTML = ''; // Effacez le contenu actuel
-
-            // Ajoutez les produits triés à l'élément wrapper
-            cardsArray.forEach(card => {
-                wrapper.appendChild(card);
-            });
         });
 
 
