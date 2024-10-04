@@ -3,23 +3,109 @@
 {% block title %}Register{% endblock %}
 
 {% block body %}
-    {% for flash_error in app.flashes('verify_email_error') %}
-        <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
-    {% endfor %}
+    <style>
+        body {
+            background: #E8E0D2;
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
 
-    <h1>Register</h1>
+        .register-container {
+            max-width: 400px;
+            margin: 100px auto; /* Center the form vertically */
+            padding: 20px;
+            background: white; /* White background for the form */
+            border-radius: 15px; /* Rounded corners */
+            box-shadow: 0 1px 10px rgba(189, 110, 122, 0.5);
+        }
 
-    {{ form_errors(registerForm) }}
+        h1 {
+            font-size: 24px;
+            color: #BD6E7A;
+            text-align: center;
+        }
 
-    {{ form_start(registerForm) }}
-        {{ form_row(registerForm.username) }}
-        {{ form_row(registerForm.email) }}
-        {{ form_row(registerForm.plainPassword, {
-            label: 'Password'
-        }) }}
-        {{ form_row(registerForm.agreeTerms) }}
+        label {
+            margin-top: 10px;
+            display: block;
+            font-weight: bold;
+            padding-right: 10px; /* Padding à droite pour éviter que les labels touchent le bord */
+        }
 
-        <a href="{{ path('app_login') }}" class="btn btn-secondary">login</a>
-        <button type="submit" class="btn">Register</button>
-    {{ form_end(registerForm) }}
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="checkbox"] {
+            width: 100%;
+            padding: 5px;
+            margin: 5px 0 20px; /* Add spacing below input fields */
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: #BD6E7A;
+            color: white;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #a95a65; /* Darker shade on hover */
+        }
+
+        .alert {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #f5c6cb;
+            border-radius: 4px;
+        }
+
+        .link-container {
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .link-container a {
+            color: #BD6E7A; /* Use the same color for links */
+            text-decoration: underline;
+        }
+    </style>
+
+    <div class="register-container">
+        {% for flash_error in app.flashes('verify_email_error') %}
+            <div class="alert alert-danger" role="alert">{{ flash_error }}</div>
+        {% endfor %}
+
+        <h1>Register</h1>
+
+        {{ form_errors(registerForm) }}
+
+        {{ form_start(registerForm) }}
+            {{ form_row(registerForm.username, {
+                label: 'Username'
+            }) }}
+            {{ form_row(registerForm.email) }}
+            {{ form_row(registerForm.plainPassword, {
+                label: 'Password'
+            }) }}
+            {{ form_row(registerForm.agreeTerms, {
+                label: 'I agree to the terms and conditions'
+            }) }}
+
+            <div class="link-container">
+                <a href="{{ path('app_login') }}" class="btn btn-secondary">Login</a>
+            </div>
+            <button type="submit" class="btn">Register</button>
+        {{ form_end(registerForm) }}
+    </div>
 {% endblock %}

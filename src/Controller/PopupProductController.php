@@ -33,6 +33,7 @@ class PopupProductController extends AbstractController
             $new_product->setUsers($this->getUser());
             $new_product->setFav(0);
             $new_product->setStatus(1);
+            $new_product->setHoliday(0);
 
             try {
                 $this->entityManagerInterface->persist($new_product);

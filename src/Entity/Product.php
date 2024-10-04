@@ -68,6 +68,9 @@ class Product
     #[ORM\OneToMany(targetEntity: Notification::class, mappedBy: 'product', orphanRemoval: true)]
     private Collection $notificationProduct;
 
+    #[ORM\Column]
+    private ?bool $holiday = null;
+
     public function __construct()
     {
         $this->favorite = new ArrayCollection();
@@ -269,7 +272,6 @@ class Product
     public function removeOffer(Offer $offer): static
     {
         if ($this->offers->removeElement($offer)) {
-            // set the owning side to null (unless already changed)
             if ($offer->getProducts() === $this) {
                 $offer->setProducts(null);
             }
@@ -304,6 +306,18 @@ class Product
                 $notificationProduct->setProduct(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isHoliday(): ?bool
+    {
+        return $this->holiday;
+    }
+
+    public function setHoliday(bool $holiday): static
+    {
+        $this->holiday = $holiday;
 
         return $this;
     }
