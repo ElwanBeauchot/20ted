@@ -1,7 +1,3 @@
-{% extends 'base.html.twig' %}
-
-{% block title %}Login{% endblock %}
-
 {% block body %}
     <style>
         body {
@@ -9,35 +5,40 @@
             font-family: 'Montserrat', sans-serif;
             margin: 0;
             padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
         }
         
         .login-container {
-            max-width: 400px;
-            margin: 100px auto; /* Center the form vertically */
+            width: 400px;
             padding: 20px;
-            background: white; /* White background for the form */
-            border-radius: 15px; /* Rounded corners */
+            background: white;
+            border-radius: 15px;
             box-shadow: 0 1px 10px rgba(189, 110, 122, 0.5);
+            text-align: center;
         }
 
         h1 {
             font-size: 24px;
             color: #BD6E7A;
-            text-align: center;
+            margin-bottom: 20px;
         }
 
         label {
             margin-top: 10px;
             display: block;
             font-weight: bold;
-            padding-right: 10px; /* Padding à droite pour éviter que les labels touchent le bord */
+            padding-right: 10px;
+            text-align: left;
         }
 
         input[type="email"],
         input[type="password"] {
             width: 100%;
             padding: 5px;
-            margin: 5px 0 20px; /* Add spacing below input fields */
+            margin: 5px 0 20px;
             border: 1px solid #ccc;
             border-radius: 4px;
         }
@@ -56,7 +57,7 @@
         }
 
         button:hover {
-            background-color: #a95a65; /* Darker shade on hover */
+            background-color: #a95a65;
         }
 
         .alert {
@@ -74,12 +75,22 @@
         }
         
         .link-container a {
-            color: #BD6E7A; /* Use the same color for links */
+            color: #BD6E7A;
             text-decoration: underline;
+        }
+
+        .logo {
+            display: block;
+            margin: 0 auto 20px;
+            max-width: 180px; /* Réduit la largeur à 150px */
+            height: auto; /* Maintient le ratio de l'image */
         }
     </style>
 
     <div class="login-container">
+        <!-- Logo ajouté au-dessus du formulaire -->
+        <img src="{{ asset('image/logo_20Ted.png') }}" alt="Logo" class="logo"/>
+
         {% if error %}
             <div class="alert">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
         {% endif %}
@@ -90,7 +101,7 @@
             </div>
         {% endif %}
 
-        <h1 class="h3 mb-3 font-weight-normal">Login</h1>
+        <h1>Login</h1>
 
         <form method="post">
             <label for="email">Email</label>

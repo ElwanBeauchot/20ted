@@ -17,6 +17,13 @@ class NotificationController extends AbstractController
     #[Route('/notification', name: 'app_notification')]
     public function index(NotificationRepository $notificationRepository): Response
     {
+
+        //////////////////security////////////////////
+        if($this->getUser() === null){
+            return $this->redirectToRoute('app_login');
+        }
+        //////////////////////////////////////////////
+
         $user = $this->getUser();
         if (!$user) {
             return $this->redirectToRoute('app_login');

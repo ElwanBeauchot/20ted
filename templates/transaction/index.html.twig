@@ -5,55 +5,83 @@
 {% block body %}
     <style>
         .offer-container {
+            max-width: 800px;
+            margin: 50px auto;
             display: flex;
             flex-direction: column;
-            flex-wrap: wrap;
             gap: 20px;
-            justify-content: center;
+            padding: 20px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 1px 10px rgba(189, 110, 122, 0.5);
         }
 
         .offer-box {
             border: 1px solid #ccc;
             border-radius: 10px;
             padding: 20px;
-            width: 50%;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             background-color: #f9f9f9;
+            transition: background-color 0.3s ease;
         }
 
-        .offer-details{
+        .offer-box:hover {
+            background-color: #f0f0f0;
+        }
+
+        .offer-details {
             display: flex;
             flex-direction: row;
             justify-content: space-between;
+            gap: 20px;
         }
 
-        .offer-product-image {
-            width: 30%;
-        }
-        .offer-product-image img{
-            width: 100%;
+        .offer-product-image img {
+            max-width: 150px;
+            border-radius: 10px;
         }
 
-        .offer-product-info{
+        .offer-product-info {
             display: flex;
             flex-direction: column;
-
-            width: 30%;
+            justify-content: space-between;
+            flex-grow: 1;
         }
 
-        .offer-product-title{
-            font-size: 2em;
+        .offer-product-title {
+            font-size: 1.5em;
             font-weight: bold;
+            color: #444;
         }
 
-        .offer-buyer{
-            width: 30%;
+        .offer-prices {
+            font-size: 1.1em;
+            color: #888;
+        }
+
+        .offer-prices del {
+            color: #c0c0c0;
+        }
+
+        .offer-buyer {
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
+
+        .offer-buyer a {
+            color: #BD6E7A;
+            font-weight: bold;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .offer-buyer a:hover {
+            color: #9f5560;
+        }
+
         .offer-buttons {
             display: flex;
             justify-content: space-between;
@@ -61,53 +89,69 @@
         }
 
         .btn {
-            padding: 10px;
+            padding: 10px 20px;
             border: none;
             border-radius: 5px;
             color: white;
             cursor: pointer;
+            transition: background-color 0.3s ease;
         }
 
         .btn-reject {
             background-color: #d9534f;
         }
 
+        .btn-reject:hover {
+            background-color: #c12e2a;
+        }
+
         .btn-accept {
             background-color: #5cb85c;
         }
 
-        .unavailable{
-            opacity: 70%;
+        .btn-accept:hover {
+            background-color: #449d44;
+        }
+
+        .unavailable {
+            opacity: 0.7;
         }
 
         .alert {
             color: red;
         }
 
+        h1 {
+            text-align: center;
+            color: #444;
+            margin-bottom: 30px;
+            font-size: 2em;
+        }
     </style>
-    <h1>Mes offres</h1>
+
+    <h1>Mes Offres</h1>
     <div class="offer-container">
         {% for offer in offerList %}
-                <div class="offer-box {% if offer.status %}unavailable{% endif %}">
-                    <div class="offer-details">
-                        <div class="offer-product-image">
-                            <img src="{{ offer.products.imageUrl }}" alt="image du produit">
+            <div class="offer-box {% if offer.status %}unavailable{% endif %}">
+                <div class="offer-details">
+                    <div class="offer-product-image">
+                        <img src="{{ offer.products.imageUrl }}" alt="image du produit">
+                    </div>
+                    <div class="offer-product-info">
+                        <div class="offer-product-title">
+                            {{ offer.products.title }}
                         </div>
-                        <div class="offer-product-info">
-                            <div class="offer-product-title">
-                                {{ offer.products.title }}
-                            </div>
-                            <div class="offer-prices">
-                                <del>{{ offer.products.price|number_format(2, '.', ' ') }} €</del>
-                                <p>{{ offer.price|number_format(2, '.', ' ') }} €</p>
-                            </div>
-                        </div>
-                        <div class="offer-buyer">
-                            Offre proposé par <a href="{{ path('app_user', {'id' : offer.products.users.id}) }}">{{ offer.products.users.username }}</a>
+                        <div class="offer-prices">
+                            <del>{{ offer.products.price|number_format(2, '.', ' ') }} €</del>
+                            <p>{{ offer.price|number_format(2, '.', ' ') }} €</p>
                         </div>
                     </div>
-                    <div class="offer-buttons">
-                        {% if not offer.status %}
+                    <div class="offer-buyer">
+                        <p>Offre proposée par <a href="{{ path('app_user', {'id' : offer.products.users.id}) }}">{{ offer.products.users.username }}</a></p>
+                    </div>
+                </div>
+                <div class="offer-buttons">
+                    {% if not offer.status %}
                         <form action="{{ path('app_my_offer_delete', {'id': offer.id}) }}" method="post" style="display:inline-block;">
                             <input type="hidden" name="_token" value="{{ csrf_token('delete-offer-' ~ offer.id) }}">
                             <button class="btn btn-reject" type="submit">Refuser Offre</button>
@@ -116,40 +160,41 @@
                             <input type="hidden" name="_token" value="{{ csrf_token('confirm-offer-' ~ offer.id) }}">
                             <button class="btn btn-accept" type="submit">Accepter Offre</button>
                         </form>
-                        {% else %}
-                           Offre acceptée
-                        {% endif %}
-                    </div>
+                    {% else %}
+                        Offre acceptée
+                    {% endif %}
                 </div>
+            </div>
         {% endfor %}
     </div>
-    <h1>Mes Commande</h1>
+
+    <h1>Mes Commandes</h1>
     <div class="offer-container">
         {% for order in orderList %}
-                <div class="offer-box {% if order.status %}unavailable{% endif %}">
-                    <div class="offer-details">
-                        <div class="offer-product-image">
-                            <img src="{{ order.products.imageUrl }}" alt="image du produit">
+            <div class="offer-box {% if order.status %}unavailable{% endif %}">
+                <div class="offer-details">
+                    <div class="offer-product-image">
+                        <img src="{{ order.products.imageUrl }}" alt="image du produit">
+                    </div>
+                    <div class="offer-product-info">
+                        <div class="offer-product-title">
+                            {{ order.products.title }}
                         </div>
-                        <div class="offer-product-info">
-                            <div class="offer-product-title">
-                                {{ order.products.title }}
-                            </div>
-                            <div class="offer-prices">
-                                <p>{{ order.amount|number_format(2, '.', ' ') }} €</p>
-                            </div>
-                        </div>
-                        <div class="offer-buyer">
-                            <span>Commandé a <a href="{{ path('app_user', {'id' : order.products.users.id}) }}">{{ order.products.users.username }}</a></span>
-                            {% for message in app.flashes('errorPayment') %}
-                                <div class="alert alert-danger">
-                                    {{ message }}
-                                </div>
-                            {% endfor %}
+                        <div class="offer-prices">
+                            <p>{{ order.amount|number_format(2, '.', ' ') }} €</p>
                         </div>
                     </div>
-                    <div class="offer-buttons">
-                        {% if not order.status %}
+                    <div class="offer-buyer">
+                        <p>Commandé à <a href="{{ path('app_user', {'id' : order.products.users.id}) }}">{{ order.products.users.username }}</a></p>
+                        {% for message in app.flashes('errorPayment') %}
+                            <div class="alert alert-danger">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="offer-buttons">
+                    {% if not order.status %}
                         <form action="{{ path('app_my_order_delete', {'id': order.id}) }}" method="post" style="display:inline-block;">
                             <input type="hidden" name="_token" value="{{ csrf_token('delete-order-' ~ order.id) }}">
                             <button class="btn btn-reject" type="submit">Annuler la commande</button>
@@ -158,12 +203,11 @@
                             <input type="hidden" name="_token" value="{{ csrf_token('confirm-order-' ~ order.id) }}">
                             <button class="btn btn-accept" type="submit">Payer</button>
                         </form>
-                        {% else %}
-                            Commande effectuée
-                        {% endif %}
-                    </div>
-
+                    {% else %}
+                        Commande effectuée
+                    {% endif %}
                 </div>
+            </div>
         {% endfor %}
     </div>
 {% endblock %}
