@@ -104,9 +104,9 @@
         {% for message in messages %}
             <div class="message-bubble
                 {% if message.sender.id == app.user.id %}
-                    right
-                {% else %}
                     left
+                {% else %}
+                    right
                 {% endif %}">
                 <p class="message-info">{{ message.sender.username }}</p>
                 <p>{{ message.text }}</p>
